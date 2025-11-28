@@ -1,0 +1,74 @@
+@import 'tailwindcss';
+
+/* Configuration */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-primary-500: #ff7000;
+  --color-primary-100: #fff1e6;
+  --color-dark-100: #000000;
+  --color-dark-200: #0f1117;
+  --color-dark-300: #151821;
+  --color-dark-400: #212734;
+  --color-dark-500: #101012;
+
+  --color-dark-gradient: linear-gradient(
+    232deg,
+    rgba(23, 28, 35, 0.41) 0%,
+    rgba(19, 22, 28, 0.7) 100%
+  );
+  --color-primary-gradient: linear-gradient(129deg, #ff7000 0%, #e2995f 100%);
+  --color-light-900: #ffffff;
+  --color-light-800: #f4f6f8;
+  --color-light-850: #fdfdfd;
+  --color-light-700: #dce3f1;
+  --color-light-500: #7b8ec8;
+  --color-light-400: #858ead;
+  --color-blue: #1da1f2;
+  --container-padding: 2rem;
+  --breakpoint-xs: 420px;
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --shadow-light-100:
+    0px 12px 20px 0px rgba(184, 184, 184, 0.03), 0px 6px 12px 0px rgba(184, 184, 184, 0.02);
+  --shadow-dark-100: 0px 2px 10px 0px rgba(46, 52, 56, 0.1);
+  --shadow-dark-200: 2px 0px 20px 0px rgba(39, 36, 36, 0.04);
+  --shadow-light-200: 10px 10px 20px 0px rgba(218, 213, 213, 0.1);
+  --shadow-light-300: -10px 10px 20px 0px rgba(218, 213, 213, 0.1);
+
+  --font-inter: 'Inter', sans-serif;
+  --font-spaceGrotesk: 'Space Grotesk', sans-serif;
+}
+
+@layer utilities {
+  .container {
+    @apply max-w-[1400px] mx-auto px-(--container-padding);
+  }
+
+  .bg-auth-light {
+    background-image: url('/backgrounds/auth-light.png');
+  }
+  .bg-auth-dark {
+    background-image: url('/backgrounds/auth-dark.png');
+  }
+}
+
+@layer animations {
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+}
