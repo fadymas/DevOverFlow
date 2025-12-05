@@ -18,7 +18,8 @@ export default defineConfig([
     },
     rules: {
       ...importPlugin.configs.recommended.rules,
-      ...promisePlugin.configs.recommended.rules
+      ...promisePlugin.configs.recommended.rules,
+      'react-hooks/set-state-in-effect': 'off'
     }
   },
 
