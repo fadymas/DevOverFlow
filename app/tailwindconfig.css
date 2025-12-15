@@ -47,10 +47,10 @@
   }
 
   .bg-auth-light {
-    background-image: url('/backgrounds/auth-light.png');
+    background-image: url('/assets/images/auth-light.png');
   }
   .bg-auth-dark {
-    background-image: url('/backgrounds/auth-dark.png');
+    background-image: url('/assets/images/auth-dark.png');
   }
 }
 
@@ -76,10 +76,6 @@
 
 /* shadcn */
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
