@@ -70,3 +70,66 @@ export const BADGE_CRITERIA = {
     GOLD: 100000
   }
 }
+
+export const HOME_QUESTIONS = [
+  {
+    _id: '1',
+    title:
+      'The Lightning Component c:LWC_PizzaTracker generated invalid output for field status. Error How to solve this',
+    tags: [
+      { _id: 't1', name: 'JavaScript' },
+      { _id: 't2', name: 'React.js' },
+      { _id: 't3', name: 'Invalid Fields' },
+      { _id: 't4', name: 'Salesforce' }
+    ],
+    author: {
+      _id: 'u1',
+      name: 'John Doe',
+      picture: '/assets/icons/avatar.svg'
+    },
+    upvotes: 1200,
+    views: 5200,
+    answers: [],
+    createdAt: new Date('2023-09-01T12:00:00.000Z')
+  },
+  {
+    _id: '2',
+    title:
+      'An HTML table where specific cells come from values in a Google Sheet identified by their neighboring cell',
+    tags: [
+      { _id: 't1', name: 'JavaScript' },
+      { _id: 't2', name: 'React.js' },
+      { _id: 't3', name: 'Invalid Fields' },
+      { _id: 't4', name: 'Salesforce' }
+    ],
+    author: {
+      _id: 'u1',
+      name: 'John Doe',
+      picture: '/assets/icons/avatar.svg'
+    },
+    upvotes: 1200,
+    views: 5200,
+    answers: [],
+    createdAt: new Date('2023-09-01T12:00:00.000Z')
+  },
+  {
+    _id: '3',
+    title:
+      'JavaScript validation for a form stops the form data from being submitted to mysql database',
+    tags: [
+      { _id: 't1', name: 'JavaScript' },
+      { _id: 't2', name: 'React.js' },
+      { _id: 't3', name: 'Invalid Fields' },
+      { _id: 't4', name: 'Salesforce' }
+    ],
+    author: {
+      _id: 'u1',
+      name: 'John Doe',
+      picture: '/assets/icons/avatar.svg'
+    },
+    upvotes: 1200,
+    views: 531111100,
+    answers: [],
+    createdAt: new Date('2023-09-01T12:00:00.000Z')
+  }
+]

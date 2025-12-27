@@ -27,7 +27,7 @@ function SideBarContent() {
               height={24}
               className={`${isActive ? '' : 'invert-colors'}`}
             />
-            <p className={`${isActive ? 'base-bold' : 'base-medium'} hidden md:block`}>
+            <p className={`${isActive ? 'base-bold' : 'base-medium'} hidden lg:block`}>
               {manu.label}
             </p>
           </Link>
@@ -38,7 +38,7 @@ function SideBarContent() {
 }
 function LeftSideBar() {
   return (
-    <aside className=" justify-between items-center flex-col p-[40px_24px_36px_24px]  sticky left-0 top-0  min-h-screen  background-light900_dark200 hidden sm:flex  border-r shadow-[10px_10px_20px_rgba(218,213,213,0.1)] ">
+    <aside className=" justify-between items-center gap-4 flex-col p-[40px_24px_36px_24px]  sticky left-0 top-0  min-h-screen  background-light900_dark200 hidden sm:flex  border-r shadow-[10px_10px_20px_rgba(218,213,213,0.1)] ">
       <div className=" flex flex-col gap-18 self-stretch">
         <div>
           <Link href="/" className="flex gap-[4.76px] font-spaceGrotesk">
@@ -49,7 +49,7 @@ function LeftSideBar() {
               height={31.32}
               className=""
             />
-            <p className="h2-bold font-spaceGrotesk text-dark-100 dark:text-light-900  h2-bold hidden md:flex">
+            <p className="h2-bold font-spaceGrotesk text-dark-100 dark:text-light-900  h2-bold hidden lg:flex">
               Dev <span className="text-primary-500">Overflow </span>
             </p>
           </Link>
@@ -59,7 +59,7 @@ function LeftSideBar() {
       <div className="down self-stretch flex flex-col gap-3 ">
         <Link href="/sign-in">
           <Button className=" btn-secondary w-full rounded-lg  shadow-none h-14">
-            <span className="primary-text-gradient max-md:hidden base-medium font-inter">
+            <span className="primary-text-gradient max-lg:hidden base-medium font-inter">
               Log In
             </span>
             <Image
@@ -67,19 +67,19 @@ function LeftSideBar() {
               alt="login"
               width={24}
               height={24}
-              className="invert-colors md:hidden"
+              className="invert-colors lg:hidden"
             />
           </Button>
         </Link>
         <Link href="/sign-up">
           <Button className="  btn-tertiary light-border-2 w-full h-14  rounded-lg shadow-none text-dark400_light900 border">
-            <span className="max-md:hidden base-medium font-inter">Sign up</span>
+            <span className="max-lg:hidden base-medium font-inter">Sign up</span>
             <Image
               src="assets/icons/sign-up.svg"
               alt="login"
               width={24}
               height={24}
-              className="invert-colors md:hidden"
+              className="invert-colors lg:hidden"
             />
           </Button>
         </Link>

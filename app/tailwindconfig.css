@@ -14,10 +14,11 @@
   --color-dark-500: #101012;
 
   --color-dark-gradient: linear-gradient(
-    232deg,
-    rgba(23, 28, 35, 0.41) 0%,
-    rgba(19, 22, 28, 0.7) 100%
+    267.08deg,
+    rgba(23, 28, 35, 0.406) 10.27%,
+    rgba(19, 22, 28, 0.7) 88.57%
   );
+
   --color-primary-gradient: linear-gradient(129deg, #ff7000 0%, #e2995f 100%);
   --color-light-900: #ffffff;
   --color-light-800: #f4f6f8;
@@ -107,6 +108,7 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --shadow-question: var(--shadow-question);
 }
 
 :root {
@@ -142,6 +144,9 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --shadow-question:
+    0px 12px 20px 0px rgba(184, 184, 184, 0.03), 0px 6px 12px 0px rgba(184, 184, 184, 0.02),
+    0px 2px 4px 0px rgba(184, 184, 184, 0.03);
 }
 
 .dark {
@@ -176,6 +181,7 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --shadow-question: 0px 2px 10px 0px rgba(46, 52, 56, 0.1);
 }
 
 @layer base {
