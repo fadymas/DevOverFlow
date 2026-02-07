@@ -61,3 +61,27 @@ export function formatNumber(value: number): string {
 function removeTrailingZero(num: number): string {
   return num % 1 === 0 ? num.toString() : num.toFixed(1)
 }
+
+export function getJoinedMonthYear(date: Date): string {
+  return date.toLocaleString('en-US', {
+    month: 'long',
+    year: 'numeric'
+  })
+}
+
+// handle the query params
+interface setQueriedUrlsProps {
+  params: string
+  keys: string[]
+  search?: string
+}
+export function setQueriedUrl({ params, keys, search }: setQueriedUrlsProps): string {
+  const urlParams = new URLSearchParams(params)
+  if (search) {
+    urlParams.set(keys[0], search || '')
+  } else {
+    urlParams.delete(keys[0])
+  }
+
+  return window.location.pathname + '?' + urlParams.toString()
+}

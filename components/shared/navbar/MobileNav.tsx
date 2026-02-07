@@ -45,7 +45,7 @@ function MobileNav() {
     >
       <SheetTrigger asChild>
         <Image
-          src={`${open ? 'assets/icons/close.svg' : 'assets/icons/hamburger.svg'}`}
+          src={`${open ? '/assets/icons/close.svg' : '/assets/icons/hamburger.svg'}`}
           alt="Menu"
           width={36}
           height={36}

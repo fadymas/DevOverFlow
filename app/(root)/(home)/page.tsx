@@ -1,14 +1,15 @@
 import HomeFilters from '@/components/home/HomeFilters'
 import Filter from '@/components/shared/Filter'
 import NoResult from '@/components/shared/NoResult'
-import QuestionCard from '@/components/shared/QuestionCard'
+import QuestionCard from '@/components/cards/QuestionCard'
 import LocalSearch from '@/components/shared/search/LocalSearch'
 import { Button } from '@/components/ui/button'
-import { HOME_QUESTIONS } from '@/constants'
 import { HomePageFilters } from '@/constants/filters'
+import { getQuestions } from '@/lib/actions/question.action'
 import Link from 'next/link'
 
-export default function Home() {
+export default async function Home() {
+  const result = await getQuestions({})
   return (
     <>
       <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
@@ -36,8 +37,8 @@ export default function Home() {
       </div>
       <div className="questions mt-10 flex w-full  flex-col gap-6">
         {/* HomeQuestion can be saved , mine,home */}
-        {HOME_QUESTIONS.length > 0 ? (
-          HOME_QUESTIONS.map((question) => {
+        {result.questions.length > 0 ? (
+          result.questions.map((question) => {
             return (
               <QuestionCard
                 key={question._id}

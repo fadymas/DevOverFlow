@@ -19,7 +19,10 @@
     rgba(19, 22, 28, 0.7) 88.57%
   );
 
+  --color-primary-from: #ff7000;
+  --color-primary-to: #e2995f;
   --color-primary-gradient: linear-gradient(129deg, #ff7000 0%, #e2995f 100%);
+
   --color-light-900: #ffffff;
   --color-light-800: #f4f6f8;
   --color-light-850: #fdfdfd;
@@ -27,6 +30,7 @@
   --color-light-500: #7b8ec8;
   --color-light-400: #858ead;
   --color-blue: #1da1f2;
+
   --container-padding: 2rem;
   --breakpoint-xs: 420px;
   --animate-accordion-down: accordion-down 0.2s ease-out;

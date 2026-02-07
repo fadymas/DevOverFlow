@@ -5,10 +5,11 @@ import prettier from 'eslint-config-prettier/flat'
 import promisePlugin from 'eslint-plugin-promise'
 import importPlugin from 'eslint-plugin-import'
 
-export default defineConfig([
+const eslintConfig = defineConfig([
   // --- Next.js rules ---
   ...nextCoreWebVitals,
   ...nextTypescript,
+  prettier,
 
   // --- Plugins (flat style) ---
   {
@@ -24,8 +25,9 @@ export default defineConfig([
   },
 
   // --- Prettier (must be last to disable conflicting rules) ---
-  prettier,
 
   // --- Ignores ---
   globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts'])
 ])
+
+export default eslintConfig

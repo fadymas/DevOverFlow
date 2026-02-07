@@ -1,16 +1,15 @@
 import Link from 'next/link'
-import { Badge } from '../ui/badge'
-import Image from 'next/image'
-import RenderTag from './rightsidebar/RenderTag'
-import Metric from './Metric'
+
+import RenderTag from '../shared/rightsidebar/RenderTag'
+import Metric from '../shared/Metric'
 import { formatNumber, getTimeStamp } from '@/lib/utils'
 
 interface Props {
   _id: string
   title: string
   tags: { _id: string; name: string }[]
-  author: { _id: string; name: string; picture: string }
-  upvotes: number
+  author: { _id: string; name: string; userId: { image: string } }
+  upvotes: string[]
   views: number
   answers: Array<object>
   createdAt: Date
@@ -18,7 +17,7 @@ interface Props {
 function QuestionCard({ _id, title, tags, author, upvotes, views, answers, createdAt }: Props) {
   return (
     <div className="card-wrapper p-9 sm:px-11 rounded-[10px] ">
-      <div className="content  flex sm:flex-row flex-col-reverse items-center justify-between gap-5">
+      <div className="content  flex sm:flex-row flex-col-reverse items-start justify-between gap-5">
         <div>
           <span className="subtle-regular text-dark400_light700 line-clamp-1 flex sm:hidden">
             {getTimeStamp(createdAt)}
@@ -37,7 +36,7 @@ function QuestionCard({ _id, title, tags, author, upvotes, views, answers, creat
       </div>
       <div className="flex-between mt-6 w-full flex-wrap gap-3">
         <Metric
-          imgUrl="assets/icons/avatar.svg"
+          imgUrl={author.userId.image}
           alt="user"
           value={author.name}
           title={` - asked ${getTimeStamp(createdAt)}`}
@@ -46,21 +45,21 @@ function QuestionCard({ _id, title, tags, author, upvotes, views, answers, creat
           isAuthor
         />
         <Metric
-          imgUrl="assets/icons/like.svg"
+          imgUrl="/assets/icons/like.svg"
           alt="Upvotes"
-          value={formatNumber(upvotes)}
+          value={formatNumber(upvotes.length)}
           title="Votes"
           textStyles="small-medium text-dark400_light800"
         />
         <Metric
-          imgUrl="assets/icons/message.svg"
+          imgUrl="/assets/icons/message.svg"
           alt="message"
           value={formatNumber(answers.length)}
           title="Answers"
           textStyles="small-medium text-dark400_light800"
         />
         <Metric
-          imgUrl="assets/icons/eye.svg"
+          imgUrl="/assets/icons/eye.svg"
           alt="eye"
           value={formatNumber(views)}
           title="Views"

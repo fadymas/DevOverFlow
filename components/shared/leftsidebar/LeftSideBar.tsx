@@ -1,12 +1,14 @@
 'use client'
 import { Button } from '@/components/ui/button'
 import { sidebarLinks } from '@/constants'
+import { authClient } from '@/lib/auth/auth-client'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React from 'react'
 
 function SideBarContent() {
+  const { data: session } = authClient.useSession()
   const pathname = usePathname()
 
   return (
@@ -14,6 +16,14 @@ function SideBarContent() {
       {sidebarLinks.map((manu) => {
         const isActive =
           (pathname.includes(manu.route) && manu.route.length > 1) || pathname === manu.route
+
+        if (manu.route === '/profile') {
+          if (session?.user) {
+            manu.route = `${manu.route}/${session.user.id}`
+          } else {
+            return null
+          }
+        }
         return (
           <Link
             href={manu.route}
@@ -63,7 +73,7 @@ function LeftSideBar() {
               Log In
             </span>
             <Image
-              src="assets/icons/account.svg"
+              src="/assets/icons/account.svg"
               alt="login"
               width={24}
               height={24}
@@ -75,7 +85,7 @@ function LeftSideBar() {
           <Button className="  btn-tertiary light-border-2 w-full h-14  rounded-lg shadow-none text-dark400_light900 border">
             <span className="max-lg:hidden base-medium font-inter">Sign up</span>
             <Image
-              src="assets/icons/sign-up.svg"
+              src="/assets/icons/sign-up.svg"
               alt="login"
               width={24}
               height={24}
