@@ -3,14 +3,9 @@ import QuestionCard from '@/components/cards/QuestionCard'
 import NoResult from '@/components/shared/NoResult'
 import LocalSearch from '@/components/shared/search/LocalSearch'
 import { getQuestionsByTagId } from '@/lib/actions/tag.action'
+import { URLProps } from '@/types'
 
-async function Page({
-  params,
-  searchParams
-}: {
-  params: Promise<{ id: string }>
-  searchParams: Promise<{ q: string }>
-}) {
+async function Page({ params, searchParams }: URLProps) {
   const { id } = await params
   const { q } = await searchParams
   //   const searchParams = await searchParams

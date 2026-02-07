@@ -12,12 +12,24 @@ import {
 import UserProfile from '@/database/userProfile.model'
 import User from '@/database/user.model'
 import { revalidatePath } from 'next/cache'
-import { Elsie_Swash_Caps } from 'next/font/google'
+import { QueryFilter } from 'mongoose'
 
 export async function getQuestions(params: GetQuestionsParams) {
   try {
     connectToDatabase()
-    const questions = await Question.find({})
+
+    const { searchQuery } = params
+
+    const query: QueryFilter<typeof Question> = {}
+    if (searchQuery) {
+      // get one of two conditions
+      query.$or = [
+        { title: { $regex: new RegExp(searchQuery, 'i') } },
+        { content: { $regex: new RegExp(searchQuery, 'i') } }
+      ]
+    }
+
+    const questions = await Question.find(query)
       .populate({ path: 'tags', model: Tag }) // ask ai
       .populate({ path: 'author', model: UserProfile, populate: { path: 'userId', model: User } })
       .sort({ createdAt: -1 })

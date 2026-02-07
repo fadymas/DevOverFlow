@@ -11,22 +11,21 @@ interface Props {
 }
 async function UserCard({ user }: Props) {
   const interactedTags = await getTopInteractedTags({ userId: user._id.toString() })
-  console.log(interactedTags)
   return (
     <Link
-      href={`/profile/${user.userId._id}`}
+      href={`/profile/${user.userId?._id}`}
       className="shadow-light100_darknone w-full max-xs:min-w-full xs:w-65"
     >
       <article className="flex w-full flex-col items-center justify-center rounded-2xl border p-8 background-light900_dark200 light-border">
         <Image
-          src={user.userId.image}
+          src={user.userId?.image}
           alt="user profile picture"
           width={100}
           height={100}
           className="rounded-full"
         />
         <div className="mt-4 text-center">
-          <h3 className="h3-bold text-dark200_light900 line-clamp-1">{user.userId.name}</h3>
+          <h3 className="h3-bold text-dark200_light900 line-clamp-1">{user.userId?.name}</h3>
         </div>
         <div className="mt-5">
           {interactedTags.length > 0 ? (

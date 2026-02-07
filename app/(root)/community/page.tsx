@@ -4,10 +4,17 @@ import Filter from '@/components/shared/Filter'
 import LocalSearch from '@/components/shared/search/LocalSearch'
 import { UserFilters } from '@/constants/filters'
 import { getAllUsers } from '@/lib/actions/user.action'
+import { SearchParamsProps } from '@/types'
 import Link from 'next/link'
+import { use } from 'react'
 
-async function page() {
-  const result = await getAllUsers({})
+function Page({ searchParams }: SearchParamsProps) {
+  const { q } = use(searchParams)
+  const result = use(
+    getAllUsers({
+      searchQuery: q
+    })
+  )
   return (
     <>
       <h1 className="h1-bold text-dark100_light900">All Users</h1>
@@ -38,4 +45,4 @@ async function page() {
   )
 }
 
-export default page
+export default Page

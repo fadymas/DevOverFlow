@@ -67,8 +67,18 @@ export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
 export async function getAllTags(params: GetAllTagsParams) {
   try {
     connectToDatabase()
+    const { searchQuery } = params
+    const query: QueryFilter<typeof Tag> = {}
 
-    const tags = await Tag.find({})
+    if (searchQuery) {
+      query.$or = [
+        {
+          name: { $regex: new RegExp(searchQuery, 'i') }
+        }
+      ]
+    }
+
+    const tags = await Tag.find(query)
     console.log(tags)
     return { tags }
   } catch (error) {
@@ -80,7 +90,7 @@ export async function getAllTags(params: GetAllTagsParams) {
 export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
   try {
     connectToDatabase()
-    const { tagId, page = 1, pageSize = 10, searchQuery } = params
+    const { tagId, searchQuery } = params
 
     const tagFilter: QueryFilter<ITag> = { _id: tagId }
     const tag = await Tag.findOne(tagFilter).populate({

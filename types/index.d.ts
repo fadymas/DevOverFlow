@@ -26,11 +26,12 @@ export interface ParamsProps {
   params: { id: string }
 }
 export interface SearchParamsProps {
-  searchParams: Promise<{ [key: string]: string | undefined }>
+  searchParams: Promise<{ q: string }>
 }
+
 export interface URLProps {
-  params: { id: string }
-  searchParams: { [key: string]: string | undefined }
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ q: string }>
 }
 export interface BadgeCounts {
   GOLD: number

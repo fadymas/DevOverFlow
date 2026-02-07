@@ -5,10 +5,14 @@ import NoResult from '@/components/shared/NoResult'
 import LocalSearch from '@/components/shared/search/LocalSearch'
 import { UserFilters } from '@/constants/filters'
 import { getAllTags } from '@/lib/actions/tag.action'
+import { SearchParamsProps } from '@/types'
 import Link from 'next/link'
 
-async function page() {
-  const result = await getAllTags({})
+async function page({ searchParams }: SearchParamsProps) {
+  const { q } = await searchParams
+  const result = await getAllTags({
+    searchQuery: q
+  })
   return (
     <>
       <h1 className="h1-bold text-dark100_light900">All Tags</h1>
@@ -32,8 +36,10 @@ async function page() {
                   <p className="paragraph-semibold text-dark300_light900">{tag.name}</p>
                 </div>
 
-                <p className='small-medium text-dark400_light500 mt-3.5'>
-                  <span className='body-semibold primary-text-gradient mr-2.5'>{tag.questions.length}+</span>
+                <p className="small-medium text-dark400_light500 mt-3.5">
+                  <span className="body-semibold primary-text-gradient mr-2.5">
+                    {tag.questions.length}+
+                  </span>
                   Questions
                 </p>
               </article>

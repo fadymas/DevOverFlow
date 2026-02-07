@@ -8,15 +8,16 @@ import { auth } from '@/lib/auth/auth'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { QuestionFilters } from '@/constants/filters'
+import { SearchParamsProps } from '@/types'
 
-export default async function Home() {
+export default async function Home({ searchParams }: SearchParamsProps) {
+  const { q } = await searchParams
   const session = await auth.api.getSession({
     headers: await headers()
   })
-
   if (!session?.user) redirect('/')
 
-  const result = await getSavedQuestions({ userId: session.user.id })
+  const result = await getSavedQuestions({ userId: session.user.id, searchQuery: q })
   return (
     <>
       <h1 className="h1-bold text-dark100_light900">Saved Questions</h1>

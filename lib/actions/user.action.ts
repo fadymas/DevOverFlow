@@ -41,11 +41,31 @@ export async function getUserById(params: GetUserByIdParams) {
 export async function getAllUsers(params: GetAllUsersParams) {
   try {
     connectToDatabase()
+    const { searchQuery } = params
+    const query: QueryFilter<typeof UserProfile> = {}
+
+    if (searchQuery) {
+      query.$or = [
+        { 'userId.name': { $regex: new RegExp(searchQuery, 'i') } },
+        { 'userId.email': { $regex: new RegExp(searchQuery, 'i') } }
+      ]
+    }
 
     // const { page = 1, pageSize = 20, filter, searchQuery } = params
-    const users = await UserProfile.find({})
-      .populate({ path: 'userId', model: User })
-      .sort({ createdAt: -1 })
+    const users = await UserProfile.aggregate([
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'userId'
+        }
+      },
+      { $unwind: '$userId' },
+      {
+        $match: query
+      }
+    ])
 
     return { users }
   } catch (error) {
