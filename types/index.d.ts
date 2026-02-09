@@ -26,12 +26,12 @@ export interface ParamsProps {
   params: { id: string }
 }
 export interface SearchParamsProps {
-  searchParams: Promise<{ q: string }>
+  searchParams: Promise<{ q: string; filter: string; page?: number }>
 }
 
 export interface URLProps {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ q: string }>
+  searchParams: Promise<{ q: string; filter: string; page?: number }>
 }
 export interface BadgeCounts {
   GOLD: number

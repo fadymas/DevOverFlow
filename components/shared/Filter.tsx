@@ -1,3 +1,4 @@
+'use client'
 import {
   Select,
   SelectContent,
@@ -6,6 +7,8 @@ import {
   SelectValue,
   SelectGroup
 } from '@/components/ui/select'
+import { setQueriedUrl } from '@/lib/utils'
+import { useRouter, useSearchParams } from 'next/navigation'
 interface Props {
   filters: {
     name: string
@@ -15,9 +18,21 @@ interface Props {
   containerClasses?: string
 }
 function Filter({ filters, otherClasses, containerClasses }: Props) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const params = searchParams.toString()
+  const filterParam = searchParams.get('filter')
+  const handleUpdateParams = (value: string) => {
+    const newUrl = setQueriedUrl({
+      params,
+      keys: ['filter'],
+      search: value
+    })
+    router.push(newUrl, { scroll: false })
+  }
   return (
     <div className={`relative ${containerClasses} `}>
-      <Select>
+      <Select onValueChange={(value) => handleUpdateParams(value)} defaultValue={filterParam || ''}>
         <SelectTrigger
           className={`${otherClasses} body-regular light-border background-light800_dark300 text-dark500_light700 border px-5 py-2.5`}
         >

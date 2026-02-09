@@ -1,7 +1,6 @@
 'use client'
 import AuthActions from '@/components/auth/AuthActions'
 import AuthCard from '@/components/auth/AuthCard'
-import ProvidersSection from '@/components/auth/ProvidersSection'
 import { CardContent } from '@/components/ui/card'
 import {
   Form,
@@ -14,9 +13,8 @@ import {
 import { Input } from '@/components/ui/input'
 import { resetPasswordSchema } from '@/lib/validations'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import z from 'zod'
+import { z } from 'zod'
 
 function ForgetPassword() {
   const form = useForm<z.infer<typeof resetPasswordSchema>>({

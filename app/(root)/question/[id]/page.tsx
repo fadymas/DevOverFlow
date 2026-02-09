@@ -9,20 +9,15 @@ import { getQuestionById } from '@/lib/actions/question.action'
 import { getUserById } from '@/lib/actions/user.action'
 import { auth } from '@/lib/auth/auth'
 import { formatNumber, getTimeStamp } from '@/lib/utils'
+import { URLProps } from '@/types'
 import { headers } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import React from 'react'
 
-export default async function page({
-  params,
-  searchParams
-}: {
-  params: Promise<{ id: string }>
-  searchParams: Promise<{ search: string }>
-}) {
+export default async function page({ params, searchParams }: URLProps) {
   const { id } = await params
+  const { page, filter } = await searchParams
   const result = await getQuestionById({ questionId: id })
   const session = await auth.api.getSession({ headers: await headers() })
 
@@ -99,6 +94,8 @@ export default async function page({
         questionId={result._id.toString()}
         userId={mongoUser._id.toString()}
         totalAnswers={result.answers.length}
+        page={page}
+        filter={filter}
       />
 
       <Answer

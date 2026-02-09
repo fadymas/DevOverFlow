@@ -41,7 +41,7 @@ export async function getUserById(params: GetUserByIdParams) {
 export async function getAllUsers(params: GetAllUsersParams) {
   try {
     connectToDatabase()
-    const { searchQuery } = params
+    const { searchQuery, filter } = params
     const query: QueryFilter<typeof UserProfile> = {}
 
     if (searchQuery) {
@@ -51,6 +51,24 @@ export async function getAllUsers(params: GetAllUsersParams) {
       ]
     }
 
+    let sortOptions = {}
+
+    switch (filter) {
+      case 'new_users':
+        sortOptions = { joinedAt: -1 }
+        break
+      case 'old_users':
+        sortOptions = { joinedAt: 1 }
+        break
+      case 'top_contributor':
+        sortOptions = { reputation: -1 }
+        break
+
+      default:
+        sortOptions = { joinedAt: -1 }
+
+        break
+    }
     // const { page = 1, pageSize = 20, filter, searchQuery } = params
     const users = await UserProfile.aggregate([
       {
@@ -64,7 +82,8 @@ export async function getAllUsers(params: GetAllUsersParams) {
       { $unwind: '$userId' },
       {
         $match: query
-      }
+      },
+      { $sort: sortOptions }
     ])
 
     return { users }
@@ -106,17 +125,41 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
   try {
     connectToDatabase()
 
-    const { userId, page = 1, pageSize = 10, filter, searchQuery } = params
+    const { userId, filter, searchQuery } = params
 
     const query: QueryFilter<typeof Question> = searchQuery
       ? { title: { $regex: new RegExp(searchQuery, 'i') } }
       : {}
 
+    let sortOptions = {}
+
+    switch (filter) {
+      case 'oldest':
+        sortOptions = { createdAt: 1 }
+        break
+      case 'most_recent':
+        sortOptions = { createdAt: -1 }
+        break
+      case 'most_voted':
+        sortOptions = { upvotes: -1 }
+        break
+      case 'most_viewed':
+        sortOptions = { views: -1 }
+        break
+      case 'most_answered':
+        sortOptions = { answers: -1 }
+        break
+
+      default:
+        sortOptions = { createdAt: -1 }
+        break
+    }
+
     const user = await UserProfile.findOne({ userId: userId }).populate({
       path: 'saved',
       match: query,
       options: {
-        sort: { createdAt: -1 }
+        sort: sortOptions
       },
       populate: [
         { path: 'tags', model: Tag, select: '_id name' },
@@ -170,7 +213,7 @@ export async function getUsersQuestions(params: GetUserStatsParams) {
   try {
     connectToDatabase()
 
-    const { userId, page = 1, pageSize = 10 } = params
+    const { userId } = params
 
     const totalQuestions = await Question.countDocuments({ author: userId })
 
@@ -193,7 +236,7 @@ export async function getUserAnswers(params: GetUserStatsParams) {
   try {
     connectToDatabase()
 
-    const { userId, page = 1, pageSize = 10 } = params
+    const { userId } = params
 
     const totalAnswers = await Answer.countDocuments({ author: userId })
 

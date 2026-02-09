@@ -1,17 +1,16 @@
-import UserCard from '@/components/cards/UserCard'
-import HomeFilters from '@/components/home/HomeFilters'
 import Filter from '@/components/shared/Filter'
 import NoResult from '@/components/shared/NoResult'
 import LocalSearch from '@/components/shared/search/LocalSearch'
-import { UserFilters } from '@/constants/filters'
+import { TagFilters } from '@/constants/filters'
 import { getAllTags } from '@/lib/actions/tag.action'
 import { SearchParamsProps } from '@/types'
 import Link from 'next/link'
 
 async function page({ searchParams }: SearchParamsProps) {
-  const { q } = await searchParams
+  const { q, filter } = await searchParams
   const result = await getAllTags({
-    searchQuery: q
+    searchQuery: q,
+    filter
   })
   return (
     <>
@@ -24,14 +23,13 @@ async function page({ searchParams }: SearchParamsProps) {
           placeholder="search for tags"
           otherClasses="flex-1"
         />
-        <Filter filters={UserFilters} otherClasses="min-h-[56px] sm:min-w-[170px] w-full" />
-        <HomeFilters />
+        <Filter filters={TagFilters} otherClasses="min-h-[56px] sm:min-w-[170px] w-full" />
       </div>
       <section className="mt-12 flex flex-wrap gap-4">
         {result.tags.length > 0 ? (
           result.tags.map((tag) => (
             <Link href={`/tags/${tag._id}`} key={tag._id} className="shadow-light100_darknone">
-              <article className="background-light900_dark200 light-border flex w-full flex-col rounded-2xl border px-8 py-10 sm:w-[260px]">
+              <article className="background-light900_dark200 light-border flex w-full flex-col rounded-2xl border px-8 py-10 sm:w-65">
                 <div className="background-light800_dark400 w-fit rounded-sm px-5 py-1.5">
                   <p className="paragraph-semibold text-dark300_light900">{tag.name}</p>
                 </div>

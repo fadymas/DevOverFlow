@@ -9,10 +9,11 @@ import Link from 'next/link'
 import { use } from 'react'
 
 function Page({ searchParams }: SearchParamsProps) {
-  const { q } = use(searchParams)
+  const { q, filter } = use(searchParams)
   const result = use(
     getAllUsers({
-      searchQuery: q
+      searchQuery: q,
+      filter
     })
   )
   return (
@@ -27,7 +28,6 @@ function Page({ searchParams }: SearchParamsProps) {
           otherClasses="flex-1"
         />
         <Filter filters={UserFilters} otherClasses="min-h-[56px] sm:min-w-[170px] w-full" />
-        <HomeFilters />
       </div>
       <section className="mt-12 flex flex-wrap gap-4">
         {result.users.length > 0 ? (

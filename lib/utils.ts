@@ -73,7 +73,7 @@ export function getJoinedMonthYear(date: Date): string {
 interface setQueriedUrlsProps {
   params: string
   keys: string[]
-  search?: string
+  search?: string | null
 }
 export function setQueriedUrl({ params, keys, search }: setQueriedUrlsProps): string {
   const urlParams = new URLSearchParams(params)

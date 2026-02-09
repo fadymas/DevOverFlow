@@ -1,8 +1,6 @@
-import React from 'react'
 import Filter from './Filter'
 import { AnswerFilters } from '@/constants/filters'
 import { getAnswers } from '@/lib/actions/answer.action'
-import Parse from 'html-react-parser'
 import Link from 'next/link'
 import Image from 'next/image'
 import { getTimeStamp } from '@/lib/utils'
@@ -14,10 +12,10 @@ interface Props {
   userId: string
   totalAnswers: number
   page?: number
-  filter?: number
+  filter?: string
 }
 async function AllAnswers({ questionId, userId, totalAnswers, page, filter }: Props) {
-  const result = await getAnswers({ questionId })
+  const result = await getAnswers({ questionId, sortBy: filter, page: page ? +page : 1 })
   return (
     <div className="mt-11">
       <div className="flex items-center justify-between ">

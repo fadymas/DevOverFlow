@@ -11,13 +11,13 @@ import { QuestionFilters } from '@/constants/filters'
 import { SearchParamsProps } from '@/types'
 
 export default async function Home({ searchParams }: SearchParamsProps) {
-  const { q } = await searchParams
+  const { q, filter } = await searchParams
   const session = await auth.api.getSession({
     headers: await headers()
   })
   if (!session?.user) redirect('/')
 
-  const result = await getSavedQuestions({ userId: session.user.id, searchQuery: q })
+  const result = await getSavedQuestions({ userId: session.user.id, searchQuery: q, filter })
   return (
     <>
       <h1 className="h1-bold text-dark100_light900">Saved Questions</h1>
@@ -33,7 +33,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
         <Filter
           filters={QuestionFilters}
           otherClasses="min-h-[56px] sm:min-w-[170px] w-full"
-          containerClasses="hidden max-md:flex"
+          containerClasses=" max-md:flex"
         />
       </div>
       <div className="questions mt-10 flex w-full  flex-col gap-6">
