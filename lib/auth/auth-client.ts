@@ -14,7 +14,9 @@ export function useAuth() {
     return authClient.signIn.email({ ...data, callbackURL: '/' })
   }
 
-  const signOut = () => authClient.signOut()
+  const signOut = () => {
+    authClient.signOut()
+  }
 
   return { signUp, signIn, signOut }
 }

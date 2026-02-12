@@ -10,13 +10,7 @@ import { headers } from 'next/headers'
 import Stats from '@/components/shared/Stats'
 import QuestionTab from '@/components/shared/QuestionTab'
 import AnswersTab from '@/components/shared/AnswersTab'
-async function Page({
-  params,
-  searchParams
-}: {
-  params: Promise<{ id: string }>
-  searchParams: Promise<{ [key: string]: string | undefined }>
-}) {
+async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const { user, totalQuestions, totalAnswers } = await getUserInfo({ userId: id })
 
@@ -84,10 +78,10 @@ async function Page({
             </TabsTrigger>
           </TabsList>
           <TabsContent value="top-posts">
-            <QuestionTab searchParams={searchParams} userId={user._id.toString()} />
+            <QuestionTab userId={user._id.toString()} />
           </TabsContent>
           <TabsContent value="answers">
-            <AnswersTab searchParams={searchParams} userId={user._id.toString()} />
+            <AnswersTab userId={user._id.toString()} />
           </TabsContent>
         </Tabs>
       </div>

@@ -5,7 +5,6 @@ import { authClient } from '@/lib/auth/auth-client'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import React from 'react'
 
 function SideBarContent() {
   const { data: session } = authClient.useSession()

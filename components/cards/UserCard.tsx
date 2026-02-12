@@ -4,7 +4,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Badge } from '../ui/badge'
 import RenderTag from '../shared/rightsidebar/RenderTag'
-import { Fragment } from 'react/jsx-runtime'
 interface Props {
   user: IUserProfile & {
     userId: { _id: string; image: string; name: string }

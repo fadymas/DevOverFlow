@@ -1,6 +1,6 @@
 'use server'
 
-import Question, { IQuestion } from '@/database/question.model'
+import Question from '@/database/question.model'
 import { connectToDatabase } from '../mongoose'
 import Tag, { ITag } from '@/database/tag.model'
 import {
@@ -18,7 +18,10 @@ export async function getQuestions(params: GetQuestionsParams) {
   try {
     connectToDatabase()
 
-    const { searchQuery, filter } = params
+    const { searchQuery, filter, page = 1, pageSize = 2 } = params
+
+    //calculate the number of posts to skip based on the page number and size
+    const skipAmount = (page - 1) * pageSize
 
     const query: QueryFilter<typeof Question> = {}
     if (searchQuery) {
@@ -47,8 +50,14 @@ export async function getQuestions(params: GetQuestionsParams) {
     const questions = await Question.find(query)
       .populate({ path: 'tags', model: Tag }) // ask ai
       .populate({ path: 'author', model: UserProfile, populate: { path: 'userId', model: User } })
+      .skip(skipAmount)
+      .limit(pageSize)
       .sort(sortOptions)
-    return { questions }
+
+    const totalQuestions = await Question.countDocuments(query)
+
+    const isNext = totalQuestions > skipAmount + questions.length
+    return { questions, isNext }
   } catch (error) {
     console.log(error)
     throw error
@@ -78,7 +87,10 @@ export async function createQuestion(params: CreateQuestionParams) {
       $push: { tags: { $each: tagDocuments } }
     })
     revalidatePath(path)
-  } catch (error) {}
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
 }
 
 export async function getQuestionById(params: GetQuestionByIdParams) {

@@ -1,6 +1,6 @@
 import UserCard from '@/components/cards/UserCard'
-import HomeFilters from '@/components/home/HomeFilters'
 import Filter from '@/components/shared/Filter'
+import Pagination from '@/components/shared/Pagination'
 import LocalSearch from '@/components/shared/search/LocalSearch'
 import { UserFilters } from '@/constants/filters'
 import { getAllUsers } from '@/lib/actions/user.action'
@@ -9,11 +9,12 @@ import Link from 'next/link'
 import { use } from 'react'
 
 function Page({ searchParams }: SearchParamsProps) {
-  const { q, filter } = use(searchParams)
+  const { q, filter, page } = use(searchParams)
   const result = use(
     getAllUsers({
       searchQuery: q,
-      filter
+      filter,
+      page: page ? +page : 1
     })
   )
   return (
@@ -41,6 +42,9 @@ function Page({ searchParams }: SearchParamsProps) {
           </div>
         )}
       </section>
+      <div className="mt-10">
+        <Pagination pageNumber={page ? +page : 1} isNext={result.isNext} />
+      </div>
     </>
   )
 }

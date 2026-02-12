@@ -2,7 +2,7 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '../ui/button'
 import { HomePageFilters } from '@/constants/filters'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { setQueriedUrl } from '@/lib/utils'
 
 function HomeFilters() {

@@ -3,6 +3,7 @@ import './globals.css'
 import '../styles/prism.css'
 import { Inter, Space_Grotesk } from 'next/font/google'
 import ThemeProvider from '@/context/ThemeProvider'
+import { cookies } from 'next/headers'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -23,15 +24,18 @@ export const metadata: Metadata = {
   }
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const cookieStore = await cookies()
+  const theme = cookieStore.get('theme')?.value
+  console.log('thats rerender')
   return (
-    <html lang="en">
+    <html lang="en" className={theme}>
       <body className={`${inter.variable} ${spaceGrotesk.variable}`}>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider cookieMode={theme}>{children}</ThemeProvider>
       </body>
     </html>
   )

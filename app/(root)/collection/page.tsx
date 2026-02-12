@@ -11,13 +11,18 @@ import { QuestionFilters } from '@/constants/filters'
 import { SearchParamsProps } from '@/types'
 
 export default async function Home({ searchParams }: SearchParamsProps) {
-  const { q, filter } = await searchParams
+  const { q, filter, page } = await searchParams
   const session = await auth.api.getSession({
     headers: await headers()
   })
   if (!session?.user) redirect('/')
 
-  const result = await getSavedQuestions({ userId: session.user.id, searchQuery: q, filter })
+  const result = await getSavedQuestions({
+    userId: session.user.id,
+    searchQuery: q,
+    filter,
+    page: page ? +page : 1
+  })
   return (
     <>
       <h1 className="h1-bold text-dark100_light900">Saved Questions</h1>

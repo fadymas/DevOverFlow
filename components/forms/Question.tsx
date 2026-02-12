@@ -25,15 +25,13 @@ import { createQuestion } from '@/lib/actions/question.action'
 import { redirect, usePathname } from 'next/navigation'
 import { useTheme } from '@/context/ThemeProvider'
 
-const type: any = 'create'
-
 interface Props {
   type: string
   mongoUserId: string
   questionDetails?: string
 }
 
-function Question({ mongoUserId, questionDetails }: Props) {
+function Question({ mongoUserId, questionDetails, type }: Props) {
   const editorRef = useRef(null)
   const pathname = usePathname()
   const { mode } = useTheme()

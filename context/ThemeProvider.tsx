@@ -1,14 +1,20 @@
 'use client'
-import { useState, createContext, useContext, useEffect } from 'react'
+import { useState, createContext, useContext } from 'react'
 
 interface ThemeContextType {
   mode: string
-  setMode: (mode: string) => void
+  handleThemeChange: () => void
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
-export default function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [mode, setMode] = useState('')
+export default function ThemeProvider({
+  children,
+  cookieMode
+}: {
+  children: React.ReactNode
+  cookieMode: string | undefined
+}) {
+  const [mode, setMode] = useState(cookieMode || 'light')
   function handleThemeChange() {
     if (
       localStorage.theme === 'dark' ||
@@ -16,16 +22,23 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
     ) {
       setMode('dark')
       document.documentElement.classList.add('dark')
+      fetch('/api/theme', {
+        method: 'POST',
+        body: JSON.stringify({ theme: 'dark' })
+      })
     } else {
       setMode('light')
       document.documentElement.classList.remove('dark')
+      fetch('/api/theme', {
+        method: 'POST',
+        body: JSON.stringify({ theme: 'light' })
+      })
     }
   }
 
-  useEffect(() => {
-    handleThemeChange()
-  }, [mode])
-  return <ThemeContext.Provider value={{ mode, setMode }}>{children}</ThemeContext.Provider>
+  return (
+    <ThemeContext.Provider value={{ mode, handleThemeChange }}>{children}</ThemeContext.Provider>
+  )
 }
 
 export function useTheme() {

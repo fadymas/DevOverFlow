@@ -1,6 +1,6 @@
 'use server'
 import { QueryFilter } from 'mongoose'
-import UserProfile, { IUserProfile } from '@/database/userProfile.model'
+import UserProfile from '@/database/userProfile.model'
 import { connectToDatabase } from '../mongoose'
 import {
   GetAllUsersParams,
@@ -19,7 +19,7 @@ export async function createUser(params: { id: string }) {
   try {
     connectToDatabase()
     const { id } = params
-    const newUserProfile = UserProfile.create({ userId: id })
+    await UserProfile.create({ userId: id })
   } catch (error) {
     console.log(error)
     throw error
@@ -41,7 +41,11 @@ export async function getUserById(params: GetUserByIdParams) {
 export async function getAllUsers(params: GetAllUsersParams) {
   try {
     connectToDatabase()
-    const { searchQuery, filter } = params
+    const { searchQuery, filter, page = 1, pageSize = 1 } = params
+
+    //calculate the number of posts to skip based on the page number and size
+    const skipAmount = (page - 1) * pageSize
+
     const query: QueryFilter<typeof UserProfile> = {}
 
     if (searchQuery) {
@@ -69,7 +73,7 @@ export async function getAllUsers(params: GetAllUsersParams) {
 
         break
     }
-    // const { page = 1, pageSize = 20, filter, searchQuery } = params
+
     const users = await UserProfile.aggregate([
       {
         $lookup: {
@@ -83,10 +87,15 @@ export async function getAllUsers(params: GetAllUsersParams) {
       {
         $match: query
       },
+      { $skip: skipAmount },
+      { $limit: pageSize },
       { $sort: sortOptions }
     ])
+    const totalUsers = await UserProfile.countDocuments(query)
 
-    return { users }
+    const isNext = totalUsers > skipAmount + users.length
+
+    return { users, isNext }
   } catch (error) {
     console.log(error)
     throw error
@@ -118,7 +127,10 @@ export async function toggleSaveQuestion(params: ToggleSaveQuestionParams) {
     }
 
     revalidatePath(path)
-  } catch (error) {}
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
 }
 
 export async function getSavedQuestions(params: GetSavedQuestionsParams) {
@@ -192,7 +204,8 @@ export async function getUserInfo(params: GetUserByIdParams) {
 
     const user = await UserProfile.findOne({ userId: userId }).populate({
       path: 'userId',
-      model: User
+      model: User,
+      select: 'name image'
     })
 
     if (!user) {
@@ -201,7 +214,6 @@ export async function getUserInfo(params: GetUserByIdParams) {
 
     const totalQuestions = await Question.countDocuments({ author: user._id })
     const totalAnswers = await Answer.countDocuments({ author: user._id })
-
     return { user, totalQuestions, totalAnswers }
   } catch (error) {
     console.log(error)

@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 'use client'
-import z from 'zod'
+import { z } from 'zod'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form'
 import { useRef } from 'react'
 import { useForm } from 'react-hook-form'
@@ -20,7 +20,7 @@ interface Props {
   questionId: string
   userId: string
 }
-function Answer({ question, questionId, userId }: Props) {
+function Answer({ questionId, userId }: Props) {
   const pathname = usePathname()
   const { mode } = useTheme()
   const form = useForm<z.infer<typeof AnswerSchema>>({
@@ -39,7 +39,9 @@ function Answer({ question, questionId, userId }: Props) {
         content: data.answer,
         path: pathname
       })
-    } catch (error) {}
+    } catch (error) {
+      console.log(error)
+    }
     form.reset()
     if (editorRef.current) {
       const editor = editorRef.current as any

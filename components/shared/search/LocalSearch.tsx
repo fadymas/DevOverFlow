@@ -2,7 +2,7 @@
 import { Input } from '@/components/ui/input'
 import { setQueriedUrl } from '@/lib/utils'
 import Image from 'next/image'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useDeferredValue, useEffect, useState } from 'react'
 
 interface CustomInputProps {
@@ -12,9 +12,8 @@ interface CustomInputProps {
   placeholder: string
   otherClasses?: string
 }
-function LocalSearch({ route, iconPosition, imgSrc, placeholder, otherClasses }: CustomInputProps) {
+function LocalSearch({ iconPosition, imgSrc, placeholder, otherClasses }: CustomInputProps) {
   const router = useRouter()
-  const pathname = usePathname()
 
   const searchParams = useSearchParams()
   const params = searchParams.toString()

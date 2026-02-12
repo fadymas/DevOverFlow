@@ -22,6 +22,7 @@ function ProvidersSection() {
       <Button
         className="flex-1/3 h-12 lg:flex-1/2  background-light900_dark400 text-dark200_light800 group cursor-pointer"
         onClick={() => signInSocial('google')}
+        type="button"
       >
         <Image
           src="/assets/icons/google.svg"

@@ -9,13 +9,15 @@ import { getQuestions } from '@/lib/actions/question.action'
 import Link from 'next/link'
 import { use } from 'react'
 import { SearchParamsProps } from '@/types'
+import Pagination from '@/components/shared/Pagination'
 
 export default function Home({ searchParams }: SearchParamsProps) {
-  const { q, filter } = use(searchParams)
+  const { q, filter, page } = use(searchParams)
   const result = use(
     getQuestions({
       searchQuery: q,
-      filter
+      filter,
+      page: page ? +page : 1
     })
   )
 
@@ -71,6 +73,9 @@ export default function Home({ searchParams }: SearchParamsProps) {
             linkTitle="Ask a Question"
           />
         )}
+      </div>
+      <div className="mt-10">
+        <Pagination pageNumber={page ? +page : 1} isNext={result.isNext} />
       </div>
     </>
   )
