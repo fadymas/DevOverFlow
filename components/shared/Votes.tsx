@@ -4,9 +4,11 @@ import { viewQuestion } from '@/lib/actions/interaction.action'
 import { downvoteQuestion, upvoteQuestion } from '@/lib/actions/question.action'
 import { toggleSaveQuestion } from '@/lib/actions/user.action'
 import { formatNumber } from '@/lib/utils'
+import { CircleCheckIcon, OctagonXIcon } from 'lucide-react'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+import { toast } from 'sonner'
 interface Props {
   type: string
   itemId: string
@@ -38,7 +40,9 @@ const Votes = ({
   }
   const handleVote = async (action: string) => {
     if (!userId) {
-      return
+      return toast('Please log in', {
+        description: 'You must be logged in to perform this action'
+      })
     }
 
     if (action === 'upvote') {
@@ -60,7 +64,9 @@ const Votes = ({
         })
       }
       // todo: show a toast
-      return
+      return !hasupVoted
+        ? toast(`Upvote Successfully`, { position: 'top-right' })
+        : toast.error(`Upvote Removed`, { position: 'top-right', className: 'ss' })
     } else if (action === 'downvote') {
       if (type === 'Question') {
         await downvoteQuestion({
@@ -80,10 +86,13 @@ const Votes = ({
         })
       }
       // todo: show a toast
-      return
+      return toast.error(!hasdownVoted ? 'Downvote Successfull' : 'Downvote Removed', {
+        position: 'top-right',
+        icon: !hasdownVoted ? <CircleCheckIcon /> : <OctagonXIcon />,
+        style: { backgroundColor: !hasdownVoted ? 'green' : 'red' }
+      })
     }
   }
-
   useEffect(() => {
     viewQuestion({
       questionId: itemId,

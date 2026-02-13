@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { BADGE_CRITERIA } from '@/constants'
+import { BadgeCounts } from '@/types'
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
@@ -84,4 +87,34 @@ export function setQueriedUrl({ params, keys, search }: setQueriedUrlsProps): st
   }
 
   return window.location.pathname + '?' + urlParams.toString()
+}
+
+interface BadgeParam {
+  criteria: {
+    type: keyof typeof BADGE_CRITERIA
+    count: number
+  }[]
+}
+
+export const assignBadges = (params: BadgeParam) => {
+  const badgeCounts: BadgeCounts = {
+    GOLD: 0,
+    SILVER: 0,
+    BRONZE: 0
+  }
+  const { criteria } = params
+
+  criteria.forEach((item) => {
+    const { type, count } = item
+    const badgeLevels: any = BADGE_CRITERIA[type]
+
+    for (const key in badgeLevels) {
+      if (!Object.hasOwn(badgeLevels, key)) continue
+
+      if (count >= badgeLevels[key]) {
+        badgeCounts[key as keyof BadgeCounts] += 1
+      }
+    }
+  })
+  return badgeCounts
 }

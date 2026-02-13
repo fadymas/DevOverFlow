@@ -12,7 +12,9 @@ import QuestionTab from '@/components/shared/QuestionTab'
 import AnswersTab from '@/components/shared/AnswersTab'
 async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const { user, totalQuestions, totalAnswers } = await getUserInfo({ userId: id })
+  const { user, totalQuestions, totalAnswers, badgeCounts, reputation } = await getUserInfo({
+    userId: id
+  })
 
   const session = await auth.api.getSession({
     headers: await headers()
@@ -66,7 +68,12 @@ async function Page({ params }: { params: Promise<{ id: string }> }) {
           )}
         </div>
       </div>
-      <Stats totalQuestions={totalQuestions} totalAnswers={totalAnswers} />
+      <Stats
+        totalQuestions={totalQuestions}
+        totalAnswers={totalAnswers}
+        badges={badgeCounts}
+        reputation={reputation}
+      />
       <div className="mt-10 flex gap-10">
         <Tabs defaultValue="top-posts" className="flex-1">
           <TabsList className="background-light800_dark400 min-h-10.5 p-1">

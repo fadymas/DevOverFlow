@@ -13,6 +13,7 @@ import UserProfile from '@/database/userProfile.model'
 import User from '@/database/user.model'
 import { revalidatePath } from 'next/cache'
 import { QueryFilter } from 'mongoose'
+import Interaction from '@/database/interaction.model'
 
 export async function getQuestions(params: GetQuestionsParams) {
   try {
@@ -86,6 +87,16 @@ export async function createQuestion(params: CreateQuestionParams) {
     await Question.findByIdAndUpdate(question._id, {
       $push: { tags: { $each: tagDocuments } }
     })
+
+    await Interaction.create({
+      user: author,
+      action: 'ask_question',
+      question: question._id,
+      tags: tagDocuments
+    })
+
+    await UserProfile.findByIdAndUpdate(author, { $inc: { reputation: 5 } })
+
     revalidatePath(path)
   } catch (error) {
     console.log(error)
@@ -144,6 +155,13 @@ export async function upvoteQuestion(params: QuestionVoteParams) {
     }
 
     // increament authors' reputation
+
+    await UserProfile.findByIdAndUpdate(userId, { $inc: { reputation: hasupVoted ? -1 : 1 } })
+
+    await UserProfile.findByIdAndUpdate(question.author, {
+      $inc: { reputation: hasupVoted ? -10 : 10 }
+    })
+
     revalidatePath(path)
   } catch (error) {
     console.log(error)
@@ -178,6 +196,12 @@ export async function downvoteQuestion(params: QuestionVoteParams) {
     }
 
     // increament authors' reputation
+    // increament authors' reputation
+    await UserProfile.findByIdAndUpdate(userId, { $inc: { reputation: hasdownVoted ? -2 : 2 } })
+
+    await UserProfile.findByIdAndUpdate(question.author, {
+      $inc: { reputation: hasdownVoted ? -10 : 10 }
+    })
     revalidatePath(path)
   } catch (error) {
     console.log(error)

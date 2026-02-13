@@ -5,6 +5,8 @@ import { AnswerVoteParams, CreateAnswerParams, GetAnswersParams } from './shared
 import { Answer } from '@/database/answer.model'
 import { revalidatePath } from 'next/cache'
 import User from '@/database/user.model'
+import Interaction from '@/database/interaction.model'
+import UserProfile from '@/database/userProfile.model'
 
 export async function createAnswer(params: CreateAnswerParams) {
   const { author, question, content, path } = params
@@ -12,7 +14,20 @@ export async function createAnswer(params: CreateAnswerParams) {
     connectToDatabase()
     const answer = await Answer.create({ author, question, content })
 
-    await Question.findByIdAndUpdate(question, { $push: { answers: answer._id } })
+    const questionObject = await Question.findByIdAndUpdate(question, {
+      $push: { answers: answer._id }
+    })
+
+    await Interaction.create({
+      user: author,
+      action: 'answer',
+      question,
+      answer: answer._id,
+      tags: questionObject.tags
+    })
+
+    await UserProfile.findByIdAndUpdate(author, { $inc: { reputation: 10 } })
+
     revalidatePath(path)
 
     return answer
@@ -90,6 +105,12 @@ export async function upvoteAnswer(params: AnswerVoteParams) {
     }
 
     // increament authors' reputation
+    await UserProfile.findByIdAndUpdate(userId, { $inc: { reputation: hasupVoted ? -2 : 2 } })
+
+    await UserProfile.findByIdAndUpdate(answer.author, {
+      $inc: { reputation: hasupVoted ? -10 : 10 }
+    })
+
     revalidatePath(path)
   } catch (error) {
     console.log(error)
@@ -124,6 +145,11 @@ export async function downvoteAnswer(params: AnswerVoteParams) {
     }
 
     // increament authors' reputation
+    await UserProfile.findByIdAndUpdate(userId, { $inc: { reputation: hasdownVoted ? -2 : 2 } })
+
+    await UserProfile.findByIdAndUpdate(answer.author, {
+      $inc: { reputation: hasdownVoted ? -10 : 10 }
+    })
     revalidatePath(path)
   } catch (error) {
     console.log(error)

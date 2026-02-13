@@ -7,6 +7,7 @@ import { getAllUsers } from '@/lib/actions/user.action'
 import { SearchParamsProps } from '@/types'
 import Link from 'next/link'
 import { use } from 'react'
+import Loading from './loading'
 
 function Page({ searchParams }: SearchParamsProps) {
   const { q, filter, page } = use(searchParams)
@@ -17,6 +18,7 @@ function Page({ searchParams }: SearchParamsProps) {
       page: page ? +page : 1
     })
   )
+
   return (
     <>
       <h1 className="h1-bold text-dark100_light900">All Users</h1>

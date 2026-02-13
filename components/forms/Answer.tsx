@@ -1,10 +1,9 @@
-/* eslint-disable react-hooks/refs */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 'use client'
 import { z } from 'zod'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '../ui/form'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { AnswerSchema } from '@/lib/validations'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -20,7 +19,8 @@ interface Props {
   questionId: string
   userId: string
 }
-function Answer({ questionId, userId }: Props) {
+function Answer({ question, questionId, userId }: Props) {
+  const [isSubmittingAI, setIsSubmittingAI] = useState(false)
   const pathname = usePathname()
   const { mode } = useTheme()
   const form = useForm<z.infer<typeof AnswerSchema>>({
@@ -49,23 +49,57 @@ function Answer({ questionId, userId }: Props) {
     }
   }
 
+  async function generateAiAnswer() {
+    if (!userId) return
+
+    setIsSubmittingAI(true)
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/chatgpt`, {
+        method: 'POST',
+        body: JSON.stringify({ question })
+      })
+
+      const aiAnswer = await response.json()
+
+      const formattedAnswer = aiAnswer.reply.replace(/\n/g, '<br>')
+      if (editorRef.current) {
+        const editor = editorRef.current as any
+        editor.setContent(formattedAnswer)
+      }
+
+      // Toast...
+    } catch (error) {
+      console.log(error)
+      throw error
+    } finally {
+      setIsSubmittingAI(false)
+    }
+  }
+
   return (
     <div>
       <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
         <h4 className="paragraph-semibold text-dark400_light800">Write your answer here</h4>
-        <Button
-          className="btn light-border-2 gap-1.5 rounded-md px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500"
-          onClick={() => {}}
-        >
-          <Image
-            src="/assets/icons/stars.svg"
-            alt="star"
-            width={12}
-            height={12}
-            className="object-contain"
-          />
-          Generate an AI Answer
-        </Button>
+        {isSubmittingAI ? (
+          <>Generating...</>
+        ) : (
+          <>
+            <Button
+              className="btn light-border-2 gap-1.5 rounded-md px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500"
+              onClick={generateAiAnswer}
+            >
+              <Image
+                src="/assets/icons/stars.svg"
+                alt="star"
+                width={12}
+                height={12}
+                className="object-contain"
+              />
+              Generate an AI Answer
+            </Button>
+          </>
+        )}
       </div>
       <Form {...form}>
         <form
