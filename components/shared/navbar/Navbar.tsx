@@ -1,11 +1,14 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import React from 'react'
 import Theme from './Theme'
 import MobileNav from './MobileNav'
 import GlobalSearch from '../search/GlobalSearch'
+import { serverSession } from '@/lib/auth/auth-client'
 
-function Navbar() {
+interface NavbarProps {
+  session: serverSession | null
+}
+function Navbar({ session }: NavbarProps) {
   return (
     <nav className="flex justify-between items-center background-light900_dark200 fixed z-50 w-full gap-5 py-6 px-3 shadow-light-300 dark:shadow-none sm:px-6  right-0 ">
       <Link href="/" className="flex items-center gap-1 justify-center ">
@@ -23,7 +26,7 @@ function Navbar() {
       <GlobalSearch />
       <div className="flex-between gap-5">
         <Theme />
-        <MobileNav />
+        <MobileNav session={session} />
       </div>
     </nav>
   )

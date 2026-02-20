@@ -7,7 +7,6 @@ import { getAllUsers } from '@/lib/actions/user.action'
 import { SearchParamsProps } from '@/types'
 import Link from 'next/link'
 import { use } from 'react'
-import Loading from './loading'
 
 function Page({ searchParams }: SearchParamsProps) {
   const { q, filter, page } = use(searchParams)

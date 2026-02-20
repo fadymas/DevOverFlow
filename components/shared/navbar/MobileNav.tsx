@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
+import { serverSession } from '@/lib/auth/auth-client'
 
 function NavContent() {
   const pathname = usePathname()
@@ -35,8 +36,13 @@ function NavContent() {
     </section>
   )
 }
-function MobileNav() {
+interface MobileNavProps {
+  session: serverSession | null
+}
+function MobileNav({ session }: MobileNavProps) {
   const [open, setOpen] = useState(false)
+  const pathname = usePathname()
+  const isActive = pathname === `/profile/${session?.user?.id}`
   return (
     <Sheet
       onOpenChange={() => {
@@ -64,20 +70,36 @@ function MobileNav() {
         </div>
 
         <div className="flex flex-col gap-3">
-          <SheetClose asChild>
-            <Link href="/sign-in">
-              <Button className="small-medium btn-secondary min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none">
-                <span className="primary-text-gradient">Log In</span>
-              </Button>
-            </Link>
-          </SheetClose>
-          <SheetClose asChild>
-            <Link href="/sign-up">
-              <Button className="small-medium btn-tertiary light-border-2 min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none text-dark400_light900 border">
-                Sign Up
-              </Button>
-            </Link>
-          </SheetClose>
+          {session?.user ? (
+            <SheetClose asChild>
+              <Link href={`/profile/${session.user.id}`} className="flex justify-center mt-4">
+                <Image
+                  src={session.user.image as string}
+                  alt={session.user.name}
+                  width={72}
+                  height={72}
+                  className={`rounded-full ${isActive ? 'border-4 border-primary-500' : ''}`}
+                />
+              </Link>
+            </SheetClose>
+          ) : (
+            <>
+              <SheetClose asChild>
+                <Link href="/sign-in">
+                  <Button className="base-medium btn-secondary min-h-10.25 w-full rounded-lg px-4 py-3 shadow-none">
+                    <span className="primary-text-gradient">Log In</span>
+                  </Button>
+                </Link>
+              </SheetClose>
+              <SheetClose asChild>
+                <Link href="/sign-up">
+                  <Button className="base-medium btn-tertiary light-border-2 min-h-10.25 w-full rounded-lg px-4 py-3 shadow-none text-dark400_light900 border">
+                    Sign Up
+                  </Button>
+                </Link>
+              </SheetClose>
+            </>
+          )}
         </div>
       </SheetContent>
     </Sheet>

@@ -102,7 +102,7 @@ export interface CreateUserParams {
   picture: string
 }
 export interface GetUserByIdParams {
-  userId: string
+  userId?: string
 }
 export interface GetAllUsersParams {
   page?: number

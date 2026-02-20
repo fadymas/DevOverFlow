@@ -32,7 +32,11 @@ export async function getUserById(params: GetUserByIdParams) {
   try {
     connectToDatabase()
     const { userId } = params
-    const user = await UserProfile.findOne({ userId: userId })
+    const user = await UserProfile.findOne({ userId: userId }).populate({
+      path: 'userId',
+      model: User,
+      select: ' name image'
+    })
     return user
   } catch (error) {
     console.log(error)

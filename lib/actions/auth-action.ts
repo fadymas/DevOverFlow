@@ -33,3 +33,10 @@ export async function signOut() {
   })
   return result
 }
+
+export async function getSession() {
+  const result = await auth.api.getSession({
+    headers: await headers()
+  })
+  return { session: result }
+}

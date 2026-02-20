@@ -1,7 +1,11 @@
 import type { NextConfig } from 'next'
+import bundleAnalyzer from '@next/bundle-analyzer'
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true'
+})
 
 const nextConfig: NextConfig = {
-  /* config options here */
   reactCompiler: true,
   allowedDevOrigins: ['http://localhost:3000', 'http://172.18.160.1:3000'],
   experimental: {
@@ -13,8 +17,7 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'lh3.googleusercontent.com' }
     ]
   },
-  serverExternalPackages: ['mongoose'],
-  
+  serverExternalPackages: ['mongoose']
 }
 
-export default nextConfig
+export default withBundleAnalyzer(nextConfig)

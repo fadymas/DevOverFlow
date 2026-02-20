@@ -1,13 +1,12 @@
 'use client'
 import { Button } from '@/components/ui/button'
 import { sidebarLinks } from '@/constants'
-import { authClient } from '@/lib/auth/auth-client'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { serverSession } from '@/lib/auth/auth-client'
 
 function SideBarContent() {
-  const { data: session } = authClient.useSession()
   const pathname = usePathname()
 
   return (
@@ -16,13 +15,6 @@ function SideBarContent() {
         const isActive =
           (pathname.includes(manu.route) && manu.route.length > 1) || pathname === manu.route
 
-        if (manu.route === '/profile') {
-          if (session?.user) {
-            manu.route = `${manu.route}/${session.user.id}`
-          } else {
-            return null
-          }
-        }
         return (
           <Link
             href={manu.route}
@@ -45,53 +37,62 @@ function SideBarContent() {
     </div>
   )
 }
-function LeftSideBar() {
+
+interface LeftSideBarProps {
+  session: serverSession | null
+}
+function LeftSideBar({ session }: LeftSideBarProps) {
+  const pathname = usePathname()
+  const isActive = pathname === `/profile/${session?.user.id}`
+
   return (
-    <aside className=" justify-between items-center gap-4 flex-col p-[40px_24px_36px_24px]  sticky left-0 top-0  min-h-screen  background-light900_dark200 hidden sm:flex  border-r shadow-[10px_10px_20px_rgba(218,213,213,0.1)] ">
+    <aside className=" justify-start items-center gap-7 flex-col p-[150px_24px_36px_24px]  sticky left-0 top-0  min-h-screen  background-light900_dark200 hidden sm:flex  border-r shadow-[10px_10px_20px_rgba(218,213,213,0.1)] ">
       <div className=" flex flex-col gap-18 self-stretch">
-        <div>
-          <Link href="/" className="flex gap-[4.76px] font-spaceGrotesk">
-            <Image
-              src="/assets/images/site-logo.svg"
-              alt="DevFlow"
-              width={31.32}
-              height={31.32}
-              className=""
-            />
-            <p className="h2-bold font-spaceGrotesk text-dark-100 dark:text-light-900  h2-bold hidden lg:flex">
-              Dev <span className="text-primary-500">Overflow </span>
-            </p>
-          </Link>
-        </div>
         <SideBarContent />
       </div>
-      <div className="down self-stretch flex flex-col gap-3 ">
-        <Link href="/sign-in">
-          <Button className=" btn-secondary w-full rounded-lg  shadow-none h-14">
-            <span className="primary-text-gradient max-lg:hidden base-medium font-inter">
-              Log In
-            </span>
-            <Image
-              src="/assets/icons/account.svg"
-              alt="login"
-              width={24}
-              height={24}
-              className="invert-colors lg:hidden"
-            />
-          </Button>
-        </Link>
-        <Link href="/sign-up">
-          <Button className="  btn-tertiary light-border-2 w-full h-14  rounded-lg shadow-none text-dark400_light900 border">
-            <span className="max-lg:hidden base-medium font-inter">Sign up</span>
-            <Image
-              src="/assets/icons/sign-up.svg"
-              alt="login"
-              width={24}
-              height={24}
-              className="invert-colors lg:hidden"
-            />
-          </Button>
-        </Link>
+      <div className=" self-stretch flex flex-col gap-3 ">
+        {session?.user ? (
+          <div>
+            <Link href={`/profile/${session.user.id}`} className="flex justify-center">
+              <Image
+                src={session.user.image as string}
+                alt="user"
+                width={100}
+                height={100}
+                className={` rounded-full min-w-lg:w-100 xs:w-14 lg:w-25  ${isActive ? 'xs:border-2 lg:border-4 border-primary-500' : ''}`}
+              />
+            </Link>
+          </div>
+        ) : (
+          <>
+            <Link href="/sign-in">
+              <Button className=" btn-secondary w-full rounded-lg  shadow-none h-14">
+                <span className="primary-text-gradient max-lg:hidden base-medium font-inter">
+                  Log In
+                </span>
+                <Image
+                  src="/assets/icons/account.svg"
+                  alt="login"
+                  width={24}
+                  height={24}
+                  className="invert-colors lg:hidden"
+                />
+              </Button>
+            </Link>
+            <Link href="/sign-up">
+              <Button className="  btn-tertiary light-border-2 w-full h-14  rounded-lg shadow-none text-dark400_light900 border">
+                <span className="max-lg:hidden base-medium font-inter">Sign up</span>
+                <Image
+                  src="/assets/icons/sign-up.svg"
+                  alt="login"
+                  width={24}
+                  height={24}
+                  className="invert-colors lg:hidden"
+                />
+              </Button>
+            </Link>
+          </>
+        )}
       </div>
     </aside>
   )
