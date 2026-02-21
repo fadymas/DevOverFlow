@@ -23,15 +23,15 @@ export interface Country {
   }
 }
 export interface ParamsProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 export interface SearchParamsProps {
-  searchParams: Promise<{ q: string; filter: string; page?: number }>
+  searchParams: Promise<{ [key: string]: string }>
 }
 
 export interface URLProps {
-  params: Promise<{ id: string }>
-  searchParams: Promise<{ q: string; filter: string; page?: number }>
+  params: Promise<{ [key: string]: string }>
+  searchParams: Promise<{ [key: string]: string }>
 }
 export interface BadgeCounts {
   GOLD: number

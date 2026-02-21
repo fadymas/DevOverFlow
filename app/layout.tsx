@@ -31,7 +31,6 @@ export default async function RootLayout({
 }>) {
   const cookieStore = await cookies()
   const theme = cookieStore.get('theme')?.value
-  console.log('thats rerender')
   return (
     <html lang="en" className={theme}>
       <body className={`${inter.variable} ${spaceGrotesk.variable}`}>

@@ -21,8 +21,8 @@ import { Input } from '@/components/ui/input'
 import { QuestionsSchema } from '@/lib/validations'
 import { Badge } from '../ui/badge'
 import Image from 'next/image'
-import { createQuestion } from '@/lib/actions/question.action'
-import { redirect, usePathname } from 'next/navigation'
+import { createQuestion, editQuestion } from '@/lib/actions/question.action'
+import { useRouter, usePathname } from 'next/navigation'
 import { useTheme } from '@/context/ThemeProvider'
 
 interface Props {
@@ -34,6 +34,7 @@ interface Props {
 function Question({ mongoUserId, questionDetails, type }: Props) {
   const editorRef = useRef(null)
   const pathname = usePathname()
+  const router = useRouter()
   const { mode } = useTheme()
 
   const parsedQuestionDetails = questionDetails && JSON.parse(questionDetails || ' ')
@@ -52,15 +53,26 @@ function Question({ mongoUserId, questionDetails, type }: Props) {
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof QuestionsSchema>) {
     try {
-      await createQuestion({
-        title: values.title,
-        content: values.explanation,
-        tags: values.tags,
-        author: JSON.parse(mongoUserId),
-        path: pathname
-      })
+      if (type === 'Edit') {
+        await editQuestion({
+          questionId: parsedQuestionDetails._id,
+          title: values.title,
+          content: values.explanation,
+          path: pathname
+        })
+        router.push(`/question/${parsedQuestionDetails._id}`)
+      } else {
+        await createQuestion({
+          title: values.title,
+          content: values.explanation,
+          tags: values.tags,
+          author: JSON.parse(mongoUserId),
+          path: pathname
+        })
+
+        router.push('/')
+      }
     } finally {
-      redirect('/')
     }
   }
   function handleInputKeyDown(e: React.KeyboardEvent<HTMLInputElement>, field: any) {
@@ -127,7 +139,7 @@ function Question({ mongoUserId, questionDetails, type }: Props) {
                   onInit={(_evt, editor) => (editorRef.current = editor)}
                   value={field.value}
                   onEditorChange={field.onChange}
-                  initialValue=""
+                  initialValue={parsedQuestionDetails?.content}
                   init={{
                     height: 350,
                     menubar: false,
@@ -181,6 +193,7 @@ function Question({ mongoUserId, questionDetails, type }: Props) {
                     className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-14 border "
                     placeholder="Add tags..."
                     onKeyDown={(e) => handleInputKeyDown(e, field)}
+                    disabled={type === 'Edit'}
                   />
                   {field.value.length > 0 && (
                     <div className="flex-start mt-2.5 gap-2.5">
@@ -188,16 +201,18 @@ function Question({ mongoUserId, questionDetails, type }: Props) {
                         <Badge
                           key={tag}
                           className="subtle-medium background-light800_dark300 text-light400_light500 flex items-center justify-center gap-2 rounded-md border-none px-4 py-2 capitalize"
-                          onClick={() => handleTagRemove(tag, field)}
+                          onClick={() => (type !== 'Edit' ? handleTagRemove(tag, field) : () => {})}
                         >
                           {tag}
-                          <Image
-                            src="/assets/icons/close.svg"
-                            alt="Close icon"
-                            width={12}
-                            height={12}
-                            className="cursor-pointer object-contain  dark:invert invert-colors"
-                          />
+                          {type !== 'Edit' && (
+                            <Image
+                              src="/assets/icons/close.svg"
+                              alt="Close icon"
+                              width={12}
+                              height={12}
+                              className="cursor-pointer object-contain  dark:invert invert-colors"
+                            />
+                          )}
                         </Badge>
                       ))}
                     </div>
@@ -218,9 +233,9 @@ function Question({ mongoUserId, questionDetails, type }: Props) {
           disabled={form.formState.isSubmitting}
         >
           {form.formState.isSubmitting ? (
-            <>{type === 'edit' ? 'Editting...' : 'Posting...'}</>
+            <>{type === 'Edit' ? 'Editting...' : 'Posting...'}</>
           ) : (
-            <>{type === 'edit' ? 'Edit Question' : 'Ask a Question'}</>
+            <>{type === 'Edit' ? 'Edit Question' : 'Ask a Question'}</>
           )}
         </Button>
       </form>

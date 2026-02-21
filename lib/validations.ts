@@ -40,3 +40,10 @@ export const QuestionsSchema = z.object({
 export const AnswerSchema = z.object({
   answer: z.string().min(100)
 })
+
+export const EditUserSchema = z.object({
+  name: z.string().min(3).max(30),
+  portfolioWebsite: z.url(),
+  location: z.string().min(4).max(30),
+  bio: z.string().min(4).max(30)
+})

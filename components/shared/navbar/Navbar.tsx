@@ -4,6 +4,7 @@ import Theme from './Theme'
 import MobileNav from './MobileNav'
 import GlobalSearch from '../search/GlobalSearch'
 import { serverSession } from '@/lib/auth/auth-client'
+import Signout from './Signout'
 
 interface NavbarProps {
   session: serverSession | null
@@ -25,6 +26,7 @@ function Navbar({ session }: NavbarProps) {
       </Link>
       <GlobalSearch />
       <div className="flex-between gap-5">
+        <Signout session={session} />
         <Theme />
         <MobileNav session={session} />
       </div>

@@ -7,7 +7,8 @@ import {
   GetSavedQuestionsParams,
   GetUserByIdParams,
   GetUserStatsParams,
-  ToggleSaveQuestionParams
+  ToggleSaveQuestionParams,
+  UpdateUserParams
 } from './shared.types'
 import User from '@/database/user.model'
 import { revalidatePath } from 'next/cache'
@@ -294,6 +295,28 @@ export async function getUserAnswers(params: GetUserStatsParams) {
       })
 
     return { totalAnswers, answers: userAnswers }
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
+}
+
+export async function updateUser(params: UpdateUserParams) {
+  try {
+    connectToDatabase()
+
+    const { authId, updateData, path } = params
+    const { bio, location, portfolioWebsite, name } = updateData
+
+    await User.findOneAndUpdate({ authId }, { name }, { new: true })
+
+    await UserProfile.findOneAndUpdate(
+      { userId: authId },
+      { bio, location, portfolioWebsite },
+      { new: true }
+    )
+
+    revalidatePath(path)
   } catch (error) {
     console.log(error)
     throw error

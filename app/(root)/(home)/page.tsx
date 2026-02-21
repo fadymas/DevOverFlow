@@ -62,6 +62,7 @@ export default function Home({ searchParams }: SearchParamsProps) {
                 views={question.views}
                 answers={question.answers}
                 createdAt={question.createdAt}
+                isProfile={false}
               />
             )
           })

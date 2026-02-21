@@ -22,6 +22,7 @@ async function QuestionTab({ userId }: Props) {
           views={question.views}
           answers={question.answers}
           createdAt={question.createdAt}
+          isProfile={true}
         />
       ))}
     </>

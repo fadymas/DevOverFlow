@@ -10,8 +10,10 @@ import { headers } from 'next/headers'
 import Stats from '@/components/shared/Stats'
 import QuestionTab from '@/components/shared/QuestionTab'
 import AnswersTab from '@/components/shared/AnswersTab'
-async function Page({ params }: { params: Promise<{ id: string }> }) {
+import { URLProps } from '@/types'
+async function Page({ params, searchParams }: URLProps) {
   const { id } = await params
+
   const { user, totalQuestions, totalAnswers, badgeCounts, reputation } = await getUserInfo({
     userId: id
   })
@@ -60,10 +62,11 @@ async function Page({ params }: { params: Promise<{ id: string }> }) {
             if authinticated and userId = authinticated user
           } */}
           {session?.user.id === user.userId._id.toString() && (
-            <Link href="/profile/edit">
-              <Button className="paragraph-medium btn-secondary text-dark300_light900 min-h-11.5 min-w-43.75 px-4 py-3">
-                Edit Profile
-              </Button>
+            <Link
+              href="/profile/edit"
+              className="paragraph-medium  min-h-11.5 min-w-43.75 px-4 py-3 transition-all  bg-linear-to-r from-primary-from to-primary-to text-white  rounded-md  text-center link "
+            >
+              Edit Profile
             </Link>
           )}
         </div>
@@ -78,17 +81,17 @@ async function Page({ params }: { params: Promise<{ id: string }> }) {
         <Tabs defaultValue="top-posts" className="flex-1">
           <TabsList className="background-light800_dark400 min-h-10.5 p-1">
             <TabsTrigger value="top-posts" className="tab">
-              QuestionTab
+              Top Posts
             </TabsTrigger>
             <TabsTrigger value="answers" className="tab">
-              AnswersTab
+              Answers
             </TabsTrigger>
           </TabsList>
           <TabsContent value="top-posts">
             <QuestionTab userId={user._id.toString()} />
           </TabsContent>
-          <TabsContent value="answers">
-            <AnswersTab userId={user._id.toString()} />
+          <TabsContent value="answers" className="flex w-full flex-col gap-6">
+            <AnswersTab userId={user._id.toString()} searchParams={searchParams} />
           </TabsContent>
         </Tabs>
       </div>

@@ -66,8 +66,8 @@ function LeftSideBar({ session }: LeftSideBarProps) {
         ) : (
           <>
             <Link href="/sign-in">
-              <Button className=" btn-secondary w-full rounded-lg  shadow-none h-14">
-                <span className="primary-text-gradient max-lg:hidden base-medium font-inter">
+              <Button className="w-full rounded-lg  shadow-none h-14 background-light800_dark200">
+                <span className="primary-text-gradient max-lg:hidden base-medium font-inter ">
                   Log In
                 </span>
                 <Image
@@ -80,8 +80,13 @@ function LeftSideBar({ session }: LeftSideBarProps) {
               </Button>
             </Link>
             <Link href="/sign-up">
-              <Button className="  btn-tertiary light-border-2 w-full h-14  rounded-lg shadow-none text-dark400_light900 border">
-                <span className="max-lg:hidden base-medium font-inter">Sign up</span>
+              <Button
+                className="w-full h-14 rounded-lg shadow-none background-light800_dark200
+               "
+              >
+                <span className="max-lg:hidden base-medium font-inter  primary-text-gradient ">
+                  Sign up
+                </span>
                 <Image
                   src="/assets/icons/sign-up.svg"
                   alt="login"

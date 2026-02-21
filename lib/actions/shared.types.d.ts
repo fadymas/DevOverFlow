@@ -1,3 +1,4 @@
+import { IUser } from '@/database/user.model'
 import { IUserProfile } from '@/database/userProfile.model'
 import { Schema } from 'mongoose'
 export interface GetQuestionsParams {
@@ -111,8 +112,8 @@ export interface GetAllUsersParams {
   searchQuery?: string // Add searchQuery parameter
 }
 export interface UpdateUserParams {
-  clerkId: string
-  updateData: Partial<IUserProfile>
+  authId: string
+  updateData: Partial<IUserProfile & IUser>
   path: string
 }
 export interface ToggleSaveQuestionParams {

@@ -1,10 +1,11 @@
 import { getUserAnswers } from '@/lib/actions/user.action'
 import AnswerCard from '../cards/AnswerCard'
+import { SearchParamsProps } from '@/types'
 
-interface Props {
+interface Props extends SearchParamsProps {
   userId: string
 }
-async function AnswersTab({ userId }: Props) {
+async function AnswersTab({ userId, searchParams }: Props) {
   const result = await getUserAnswers({
     userId,
     page: 1
@@ -12,7 +13,14 @@ async function AnswersTab({ userId }: Props) {
   return (
     <>
       {result.answers.map((item) => (
-        <AnswerCard key={item._id} />
+        <AnswerCard
+          key={item._id}
+          _id={item._id}
+          question={item.question}
+          author={item.author}
+          upvotes={item.upvotes.length}
+          createdAt={item.createdAt}
+        />
       ))}
     </>
   )

@@ -15,7 +15,7 @@ function ProvidersSection() {
           width={30}
           height={30}
           alt="github"
-          className="invert-colors max-lg:w-10 max-lg:h-10 group-hover:invert-0"
+          className="invert-100 max-lg:w-10 dark:invert-0 max-lg:h-10 group-hover:invert-0 dark:group-hover:invert-100"
         />
         <p className="hidden lg:block group-hover:invert-100">Login with GitHub</p>
       </Button>

@@ -1,5 +1,6 @@
 import { createAuthClient } from 'better-auth/react'
 import { auth } from './auth'
+import { redirect } from 'next/navigation'
 
 export const authClient = createAuthClient({
   /** The base URL of the server (optional if you're using the same domain) */
@@ -16,7 +17,13 @@ export function useAuth() {
   }
 
   const signOut = () => {
-    authClient.signOut()
+    authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          window.location.href = '/'
+        }
+      }
+    })
   }
 
   return { signUp, signIn, signOut }
