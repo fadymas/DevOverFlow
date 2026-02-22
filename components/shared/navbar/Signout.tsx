@@ -6,8 +6,9 @@ import { redirect, useRouter } from 'next/navigation'
 
 interface Props {
   session: serverSession | null
+  className: string
 }
-function Signout({ session }: Props) {
+function Signout({ session, className }: Props) {
   const { signOut } = useAuth()
   if (!session?.user) {
     return null
@@ -17,7 +18,7 @@ function Signout({ session }: Props) {
       onClick={() => {
         signOut()
       }}
-      className=" rounded-md "
+      className={`${className} rounded-md `}
     >
       Sign Out
     </Button>

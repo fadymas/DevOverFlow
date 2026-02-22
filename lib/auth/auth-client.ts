@@ -1,6 +1,5 @@
 import { createAuthClient } from 'better-auth/react'
 import { auth } from './auth'
-import { redirect } from 'next/navigation'
 
 export const authClient = createAuthClient({
   /** The base URL of the server (optional if you're using the same domain) */
@@ -26,7 +25,42 @@ export function useAuth() {
     })
   }
 
-  return { signUp, signIn, signOut }
+  const forgetPassword = (data: { email: string }) => {
+    return authClient.requestPasswordReset(
+      {
+        email: data.email,
+        redirectTo: '/reset-password'
+      },
+      {
+        onSuccess: () => {
+          if (window.location.href.includes('/check-email')) return
+          window.location.href = `/check-email?email=${data.email}`
+        }
+      }
+    )
+  }
+
+  const resetPassword = (data: { password: string }) => {
+    const token = new URLSearchParams(window.location.search).get('token')
+    if (!token) {
+      throw new Error('No token found')
+    }
+    return authClient.resetPassword(
+      {
+        newPassword: data.password,
+        token: token
+      },
+      {
+        onSuccess: () => {
+          window.location.href = '/sign-in'
+        },
+        onError(context) {
+          console.log(context.error)
+        }
+      }
+    )
+  }
+  return { signUp, signIn, signOut, forgetPassword, resetPassword }
 }
 
 export function useSocialAuth() {

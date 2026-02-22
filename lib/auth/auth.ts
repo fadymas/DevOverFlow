@@ -3,6 +3,7 @@ import { adapter } from './adapter'
 import { nextCookies } from 'better-auth/next-js'
 import { Session } from './auth-client'
 import { createUser } from '../actions/user.action'
+import { NextResponse } from 'next/server'
 
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
@@ -10,8 +11,24 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     autoSignIn: false,
-    requireEmailVerification: true
+    requireEmailVerification: true,
+    sendResetPassword: async ({ user, url }: { user: Session; url: string }) => {
+      fetch(process.env.BETTER_AUTH_URL + '/api/send-email', {
+        method: 'POST',
+        cache: 'no-cache',
+        body: JSON.stringify({
+          url,
+          email: user.email,
+          subject: 'Reset your password',
+          html: `<h1>Click the link to reset your password: <a href=${url}>here</a></h1>`
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+    }
   },
+
   emailVerification: {
     sendOnSignUp: true,
     sendVerificationEmail: async ({ user, url }: { user: Session; url: string }) => {
@@ -19,20 +36,16 @@ export const auth = betterAuth({
         method: 'POST',
         cache: 'no-cache',
         body: JSON.stringify({
-          url,
-          email: user.email
+          email: user.email,
+          subject: 'Verify Your Email',
+          html: `<h1>Verify Your Email <a href=${url}>here</a></h1>`
         }),
         headers: {
           'Content-Type': 'application/json'
         }
       })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data)
-          return
-        })
-        .catch((error) => console.log(error))
-    }
+    },
+    autoSignInAfterVerification: true
   },
   socialProviders: {
     google: {

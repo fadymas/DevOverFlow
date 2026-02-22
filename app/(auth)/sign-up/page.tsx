@@ -17,6 +17,7 @@ import { signUpSchema } from '@/lib/validations'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
 
 function SignUp() {
@@ -34,8 +35,16 @@ function SignUp() {
     const response = await signUp(values)
 
     if (response.error) {
-      form.setError('email', { message: String(response.error.message) })
+      form.setError('email', {
+        message: String(
+          response.error.message === undefined ? 'An error occurred' : response.error.message
+        )
+      })
       return
+    } else {
+      toast.info('Check your email to verify your account', {
+        position: 'top-center'
+      })
     }
   }
   return (

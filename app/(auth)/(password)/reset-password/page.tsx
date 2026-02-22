@@ -11,12 +11,14 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/lib/auth/auth-client'
 import { resetPasswordSchema } from '@/lib/validations'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 function ForgetPassword() {
+  const { resetPassword } = useAuth()
   const form = useForm<z.infer<typeof resetPasswordSchema>>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
@@ -26,9 +28,7 @@ function ForgetPassword() {
   })
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof resetPasswordSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+    resetPassword(values)
   }
   return (
     <AuthCard title="Set new password" description="New password must be different">
@@ -44,7 +44,11 @@ function ForgetPassword() {
                     Password
                   </FormLabel>
                   <FormControl>
-                    <Input {...field} className="h-12 background-light900_dark300" />
+                    <Input
+                      {...field}
+                      type="password"
+                      className="h-12 background-light900_dark300"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -59,7 +63,11 @@ function ForgetPassword() {
                     Confirm password
                   </FormLabel>
                   <FormControl>
-                    <Input {...field} className="h-12 background-light900_dark300" />
+                    <Input
+                      {...field}
+                      type="password"
+                      className="h-12 background-light900_dark300"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -70,6 +78,7 @@ function ForgetPassword() {
               AuthType="other"
               otherActionTitle="Back to login"
               otherActionUrl="/sign-in"
+              statue={form.formState.isSubmitting}
             />
           </form>
         </Form>

@@ -1,24 +1,45 @@
+'use client'
 import Link from 'next/link'
 import { Button } from '../ui/button'
 import Image from 'next/image'
 import { Spinner } from '@/components/ui/spinner'
+import { useAuth } from '@/lib/auth/auth-client'
+import { useState } from 'react'
 
 interface Props {
   buttonTitle: string
   AuthType: 'signIn' | 'signUp' | 'other'
   otherActionTitle?: string
   otherActionUrl?: string
-
+  email?: string
   statue?: boolean
 }
-function AuthActions({ buttonTitle, AuthType, otherActionTitle, otherActionUrl, statue }: Props) {
+function AuthActions({
+  buttonTitle,
+  AuthType,
+  otherActionTitle,
+  otherActionUrl,
+  email,
+  statue
+}: Props) {
+  const { forgetPassword } = useAuth()
+  const [isResend, setIsResend] = useState(false)
   return (
     <>
       <Button
         className="py-3 px-4 h-11.25 bg-linear-129 from-primary-from  to-primary-to text-light text-light-900 hover:bg-linear-0 cursor-pointer transition-colors "
-        disabled={statue}
+        disabled={statue || isResend}
+        onClick={
+          email
+            ? async () => {
+                setIsResend(true)
+                const response = await forgetPassword({ email })
+                if (response) setIsResend(false)
+              }
+            : () => {}
+        }
       >
-        {(statue as boolean) ? <Spinner /> : buttonTitle}
+        {(statue as boolean) || isResend ? <Spinner /> : buttonTitle}
       </Button>
 
       {AuthType === 'signIn' ? (

@@ -48,7 +48,7 @@ export async function getUserById(params: GetUserByIdParams) {
 export async function getAllUsers(params: GetAllUsersParams) {
   try {
     connectToDatabase()
-    const { searchQuery, filter, page = 1, pageSize = 1 } = params
+    const { searchQuery, filter, page = 1, pageSize = 10 } = params
 
     //calculate the number of posts to skip based on the page number and size
     const skipAmount = (page - 1) * pageSize
@@ -144,13 +144,15 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
   try {
     connectToDatabase()
 
-    const { userId, filter, searchQuery } = params
+    const { userId, filter, searchQuery, page = 1, pageSize = 20 } = params
 
     const query: QueryFilter<typeof Question> = searchQuery
       ? { title: { $regex: new RegExp(searchQuery, 'i') } }
       : {}
 
     let sortOptions = {}
+
+    const skipAmount = (page - 1) * pageSize
 
     switch (filter) {
       case 'oldest':
@@ -178,7 +180,9 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
       path: 'saved',
       match: query,
       options: {
-        sort: sortOptions
+        sort: sortOptions,
+        skip: skipAmount,
+        limit: pageSize
       },
       populate: [
         { path: 'tags', model: Tag, select: '_id name' },

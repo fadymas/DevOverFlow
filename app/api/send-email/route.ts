@@ -2,12 +2,12 @@ import { NextResponse } from 'next/server'
 import { createTransport } from 'nodemailer'
 export async function POST(request: Request) {
   const body = await request.json()
-
+  console.log({ body })
   const message = {
     from: 'Devflow@project.dev',
     to: body.email,
-    subject: 'Verify Your Email',
-    html: `<h1>Verify Your Email <a href=${body.url}>here</a></h1>`,
+    subject: body.subject,
+    html: body.html,
 
     headers: {
       'X-Entity-Ref-ID': 'newmail'

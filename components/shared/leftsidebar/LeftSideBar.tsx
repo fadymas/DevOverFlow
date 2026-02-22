@@ -10,7 +10,7 @@ function SideBarContent() {
   const pathname = usePathname()
 
   return (
-    <div className="list gap-6 flex flex-col">
+    <div className="list lg:gap-6 gap-10  flex flex-col">
       {sidebarLinks.map((manu) => {
         const isActive =
           (pathname.includes(manu.route) && manu.route.length > 1) || pathname === manu.route
@@ -19,7 +19,7 @@ function SideBarContent() {
           <Link
             href={manu.route}
             key={manu.label}
-            className={` p-4 rounded-lg gap-2.5  flex font-inter  ${isActive ? 'primary-gradient rounded-lg text-light-900' : 'text-dark300_light900'} `}
+            className={` lg:p-4   rounded-lg gap-2.5  flex font-inter justify-center lg:justify-start  ${isActive ? 'primary-gradient rounded-lg text-light-900' : 'text-dark300_light900'} `}
           >
             <Image
               src={manu.imgURL}
@@ -47,7 +47,7 @@ function LeftSideBar({ session }: LeftSideBarProps) {
 
   return (
     <aside className=" justify-start items-center gap-7 flex-col p-[150px_24px_36px_24px]  sticky left-0 top-0  min-h-screen  background-light900_dark200 hidden sm:flex  border-r shadow-[10px_10px_20px_rgba(218,213,213,0.1)] ">
-      <div className=" flex flex-col gap-18 self-stretch">
+      <div className=" flex flex-col gap-18 self-stretch min-w-6">
         <SideBarContent />
       </div>
       <div className=" self-stretch flex flex-col gap-3 ">

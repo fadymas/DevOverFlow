@@ -11,7 +11,7 @@ interface Props {
   questionId: string
   userId: string
   totalAnswers: number
-  page?: number
+  page?: string
   filter?: string
 }
 async function AllAnswers({ questionId, userId, totalAnswers, page, filter }: Props) {
@@ -25,8 +25,8 @@ async function AllAnswers({ questionId, userId, totalAnswers, page, filter }: Pr
       <div>
         {result.answers.map((answer) => (
           <article key={answer._id} className="light-border border-b py-10">
-            <div className="flex items-center justify-between">
-              <div className="mb-8 flex flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
+            <div className="flex items-center ">
+              <div className="mb-8 flex flex-row justify-between gap-5 sm:flex-row sm:items-center sm:gap-2 w-full">
                 <Link
                   href={`/profile/${answer.author._id}`}
                   className="flex  flex-1 items-start gap-1 sm:items-center"
@@ -38,7 +38,7 @@ async function AllAnswers({ questionId, userId, totalAnswers, page, filter }: Pr
                     alt="profile"
                     className="rounded-full object-cover max-sm:mt-0.5"
                   />
-                  <div className="flex flex-col sm:flex-row sm:items-center">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1">
                     <p className="body-semibold text-dark300_light700">
                       {answer.author.userId.name}
                     </p>

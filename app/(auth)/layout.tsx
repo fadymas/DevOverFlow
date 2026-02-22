@@ -1,5 +1,6 @@
 import React from 'react'
 import { Card } from 'components/ui/card'
+import { Toaster } from '@/components/ui/sonner'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -7,6 +8,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <Card className="w-130 rounded-[10px] py-10 px-8  gap-10 font-inter justify-between  background-light800_dark200">
         {children}
       </Card>
+      <Toaster />
     </main>
   )
 }

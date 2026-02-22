@@ -11,12 +11,14 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/lib/auth/auth-client'
 import { forgetPasswordSchema } from '@/lib/validations'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 function ForgetPassword() {
+  const { forgetPassword } = useAuth()
   const form = useForm<z.infer<typeof forgetPasswordSchema>>({
     resolver: zodResolver(forgetPasswordSchema),
     defaultValues: {
@@ -24,10 +26,8 @@ function ForgetPassword() {
     }
   })
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof forgetPasswordSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+  async function onSubmit(values: z.infer<typeof forgetPasswordSchema>) {
+    await forgetPassword(values)
   }
   return (
     <AuthCard title="Forgot password?" description="No worries, we'll send you reset instructions.">
@@ -55,6 +55,7 @@ function ForgetPassword() {
               AuthType="other"
               otherActionTitle="Back to login"
               otherActionUrl="/sign-in"
+              statue={form.formState.isSubmitting}
             />
           </form>
         </Form>

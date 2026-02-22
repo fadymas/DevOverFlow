@@ -26,7 +26,7 @@ function Navbar({ session }: NavbarProps) {
       </Link>
       <GlobalSearch />
       <div className="flex-between gap-5">
-        <Signout session={session} />
+        <Signout session={session} className="md:block hidden" />
         <Theme />
         <MobileNav session={session} />
       </div>
