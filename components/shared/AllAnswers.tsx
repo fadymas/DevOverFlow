@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { getTimeStamp } from '@/lib/utils'
 import ParseHTML from './ParseHTML'
 import Votes from './Votes'
+import CustomUserAvatar from './CustomUserAvatar'
 
 interface Props {
   questionId: string
@@ -31,13 +32,20 @@ async function AllAnswers({ questionId, userId, totalAnswers, page, filter }: Pr
                   href={`/profile/${answer.author._id}`}
                   className="flex  flex-1 items-start gap-1 sm:items-center"
                 >
-                  <Image
-                    src={answer.author.userId.image}
-                    width={18}
-                    height={18}
-                    alt="profile"
-                    className="rounded-full object-cover max-sm:mt-0.5"
-                  />
+                  {answer.author.userId.image ? (
+                    <Image
+                      src={answer.author.userId.image}
+                      width={18}
+                      height={18}
+                      alt="profile"
+                      className="rounded-full object-cover max-sm:mt-0.5"
+                    />
+                  ) : (
+                    <CustomUserAvatar
+                      name={answer.author.userId.name}
+                      className="xs:size-4.5 lg:size-4.5 text-xs! max-sm:mt-0.5 size-4.5"
+                    />
+                  )}
                   <div className="flex flex-col sm:flex-row sm:items-center gap-1">
                     <p className="body-semibold text-dark300_light700">
                       {answer.author.userId.name}

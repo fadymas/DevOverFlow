@@ -5,12 +5,13 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { serverSession } from '@/lib/auth/auth-client'
+import CustomUserAvatar from '../CustomUserAvatar'
 
 function SideBarContent() {
   const pathname = usePathname()
 
   return (
-    <div className="list lg:gap-6 gap-10  flex flex-col">
+    <div className="list gap-6 flex flex-col">
       {sidebarLinks.map((manu) => {
         const isActive =
           (pathname.includes(manu.route) && manu.route.length > 1) || pathname === manu.route
@@ -19,7 +20,7 @@ function SideBarContent() {
           <Link
             href={manu.route}
             key={manu.label}
-            className={` lg:p-4   rounded-lg gap-2.5  flex font-inter justify-center lg:justify-start  ${isActive ? 'primary-gradient rounded-lg text-light-900' : 'text-dark300_light900'} `}
+            className={`  p-4 rounded-lg gap-2.5  flex font-inter justify-center lg:justify-start  ${isActive ? 'primary-gradient rounded-lg text-light-900' : 'text-dark300_light900'} `}
           >
             <Image
               src={manu.imgURL}
@@ -54,13 +55,17 @@ function LeftSideBar({ session }: LeftSideBarProps) {
         {session?.user ? (
           <div>
             <Link href={`/profile/${session.user.id}`} className="flex justify-center">
-              <Image
-                src={session.user.image as string}
-                alt="user"
-                width={100}
-                height={100}
-                className={` rounded-full min-w-lg:w-100 xs:w-14 lg:w-25  ${isActive ? 'xs:border-2 lg:border-4 border-primary-500' : ''}`}
-              />
+              {session.user.image ? (
+                <Image
+                  src={session.user.image as string}
+                  alt="user"
+                  width={100}
+                  height={100}
+                  className={` rounded-full min-w-lg:w-100 xs:w-14 lg:w-25  ${isActive ? 'xs:border-2 lg:border-4 border-primary-500' : ''}`}
+                />
+              ) : (
+                <CustomUserAvatar name={session.user.name} isActive={isActive} />
+              )}
             </Link>
           </div>
         ) : (

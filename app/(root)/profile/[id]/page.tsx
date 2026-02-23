@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button'
 import { getUserInfo } from '@/lib/actions/user.action'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -11,6 +10,7 @@ import Stats from '@/components/shared/Stats'
 import QuestionTab from '@/components/shared/QuestionTab'
 import AnswersTab from '@/components/shared/AnswersTab'
 import { URLProps } from '@/types'
+import CustomUserAvatar from '@/components/shared/CustomUserAvatar'
 async function Page({ params, searchParams }: URLProps) {
   const { id } = await params
 
@@ -26,13 +26,17 @@ async function Page({ params, searchParams }: URLProps) {
     <>
       <div className="flex flex-col-reverse items-start justify-between sm:flex-row">
         <div className="flex flex-col items-start gap-4 lg:flex-row">
-          <Image
-            src={user.userId.image}
-            alt="profile image"
-            width={140}
-            height={140}
-            className="rounded-full object-cover"
-          />
+          {user.userId.image ? (
+            <Image
+              src={user.userId.image}
+              alt="profile image"
+              width={140}
+              height={140}
+              className="rounded-full object-cover"
+            />
+          ) : (
+            <CustomUserAvatar name={user.userId.name} />
+          )}
           <div className="mt-3">
             <h2 className="h2-bold text-dark100_light900">{user.userId.name}</h2>
 

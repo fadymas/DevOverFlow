@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 import { serverSession } from '@/lib/auth/auth-client'
 import Signout from './Signout'
+import CustomUserAvatar from '../CustomUserAvatar'
 
 function NavContent() {
   const pathname = usePathname()
@@ -73,16 +74,19 @@ function MobileNav({ session }: MobileNavProps) {
         <div className="flex flex-col gap-3">
           {session?.user ? (
             <>
-              {' '}
               <SheetClose asChild>
                 <Link href={`/profile/${session.user.id}`} className="flex justify-center mt-4">
-                  <Image
-                    src={session.user.image as string}
-                    alt={session.user.name}
-                    width={72}
-                    height={72}
-                    className={`rounded-full ${isActive ? 'border-4 border-primary-500' : ''}`}
-                  />
+                  {session.user.image ? (
+                    <Image
+                      src={session.user.image as string}
+                      alt={session.user.name}
+                      width={72}
+                      height={72}
+                      className={`rounded-full ${isActive ? 'border-4 border-primary-500' : ''}`}
+                    />
+                  ) : (
+                    <CustomUserAvatar name={session.user.name} isActive={isActive} />
+                  )}
                 </Link>
               </SheetClose>
               <SheetClose asChild>

@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Badge } from '../ui/badge'
 import RenderTag from '../shared/rightsidebar/RenderTag'
+import CustomUserAvatar from '../shared/CustomUserAvatar'
 interface Props {
   user: IUserProfile & {
     userId: { _id: string; image: string; name: string }
@@ -17,13 +18,17 @@ async function UserCard({ user }: Props) {
     <div className="shadow-light100_darknone w-full max-xs:min-w-full xs:w-65">
       <article className="flex w-full flex-col items-center justify-center rounded-2xl border p-8 background-light900_dark200 light-border">
         <Link href={`/profile/${user.userId?._id}`}>
-          <Image
-            src={user.userId?.image}
-            alt="user profile picture"
-            width={100}
-            height={100}
-            className="rounded-full"
-          />
+          {user.userId?.image ? (
+            <Image
+              src={user.userId?.image}
+              alt="user profile picture"
+              width={100}
+              height={100}
+              className="rounded-full"
+            />
+          ) : (
+            <CustomUserAvatar className="xs:size-25 " name={user.userId?.name} />
+          )}
         </Link>
         <div className="mt-4 text-center">
           <h3 className="h3-bold text-dark200_light900 line-clamp-1">{user.userId?.name}</h3>

@@ -55,7 +55,7 @@ async function QuestionCard({
         <Metric
           imgUrl={author.userId.image}
           alt="user"
-          value={author.name}
+          value={author.userId.name}
           title={` - asked ${getTimeStamp(createdAt)}`}
           textStyles="small-medium text-dark400_light800"
           href={`/profile/${author.userId._id}`}

@@ -3,7 +3,6 @@ import { adapter } from './adapter'
 import { nextCookies } from 'better-auth/next-js'
 import { Session } from './auth-client'
 import { createUser } from '../actions/user.action'
-import { NextResponse } from 'next/server'
 
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
@@ -52,11 +51,27 @@ export const auth = betterAuth({
       accessType: 'offline',
       prompt: 'select_account consent',
       clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      overrideUserInfoOnSignIn: true,
+      mapProfileToUser: async (profile) => {
+        return {
+          name: profile.name,
+          email: profile.email,
+          image: profile.picture
+        }
+      }
     },
     github: {
       clientId: process.env.GITHUB_CLIENT_ID as string,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET as string
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+      overrideUserInfoOnSignIn: true,
+      mapProfileToUser: async (profile) => {
+        return {
+          name: profile.name || profile.login, // GitHub sometimes has null names, so we use login as fallback
+          email: profile.email,
+          image: profile.avatar_url
+        }
+      }
     }
   },
   databaseHooks: {

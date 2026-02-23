@@ -43,7 +43,7 @@ export const AnswerSchema = z.object({
 
 export const EditUserSchema = z.object({
   name: z.string().min(3).max(30),
-  portfolioWebsite: z.url(),
-  location: z.string().min(4).max(30),
-  bio: z.string().min(4).max(30)
+  portfolioWebsite: z.union([z.url(), z.literal('')]),
+  location: z.union([z.string().min(4).max(30), z.literal('')]),
+  bio: z.union([z.string().min(4).max(30), z.literal('')])
 })

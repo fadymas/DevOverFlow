@@ -216,7 +216,7 @@ export async function getUserInfo(params: GetUserByIdParams) {
     const user = await UserProfile.findOne({ userId: userId }).populate({
       path: 'userId',
       model: User,
-      select: 'name image'
+      select: 'name image id'
     })
 
     if (!user) {

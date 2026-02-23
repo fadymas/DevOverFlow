@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Answer from '@/components/forms/Answer'
 import AllAnswers from '@/components/shared/AllAnswers'
+import CustomUserAvatar from '@/components/shared/CustomUserAvatar'
 import Metric from '@/components/shared/Metric'
 import ParseHTML from '@/components/shared/ParseHTML'
 import RenderTag from '@/components/shared/rightsidebar/RenderTag'
@@ -32,13 +33,20 @@ export default async function page({ params, searchParams }: URLProps) {
             href={`/profile/${result.author.userId}`}
             className="flex items-center justify-start gap-1"
           >
-            <Image
-              src={result.author.userId.image}
-              className="rounded-full"
-              width={22}
-              height={22}
-              alt="profile"
-            />
+            {result.author.userId.image ? (
+              <Image
+                src={result.author.userId.image}
+                className="rounded-full"
+                width={22}
+                height={22}
+                alt="profile"
+              />
+            ) : (
+              <CustomUserAvatar
+                name={result.author.userId.name}
+                className="xs:size-5.5 lg:size-5.5 text-sm!"
+              />
+            )}
             <p className="paragraph-semibold text-dark300_light700">{result.author.userId.name}</p>
           </Link>
           <div className="flex justify-end">

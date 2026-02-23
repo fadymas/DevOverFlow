@@ -84,7 +84,7 @@ function Profile({ user }: Props) {
           render={({ field }) => (
             <FormItem className="space-y-3.5">
               <FormLabel className="paragraph-semibold text-dark400_light800">
-                Portfolio Link<span className="text-primary-500">*</span>
+                Portfolio Link
               </FormLabel>
               <FormControl className="mt-3.5">
                 <Input
@@ -103,9 +103,7 @@ function Profile({ user }: Props) {
           name="location"
           render={({ field }) => (
             <FormItem className="space-y-3.5">
-              <FormLabel className="paragraph-semibold text-dark400_light800">
-                Location<span className="text-primary-500">*</span>
-              </FormLabel>
+              <FormLabel className="paragraph-semibold text-dark400_light800">Location</FormLabel>
               <FormControl className="mt-3.5">
                 <Input
                   className="no-focus paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 min-h-14 border "
@@ -123,9 +121,7 @@ function Profile({ user }: Props) {
           name="bio"
           render={({ field }) => (
             <FormItem className="space-y-3.5">
-              <FormLabel className="paragraph-semibold text-dark400_light800">
-                Bio<span className="text-primary-500">*</span>
-              </FormLabel>
+              <FormLabel className="paragraph-semibold text-dark400_light800">Bio</FormLabel>
               <FormControl className="mt-3.5">
                 <Textarea
                   style={{ resize: 'none' }}
