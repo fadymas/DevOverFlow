@@ -5,6 +5,7 @@ import { TagFilters } from '@/constants/filters'
 import { getAllTags } from '@/lib/actions/tag.action'
 import { SearchParamsProps } from '@/types'
 import Link from 'next/link'
+import Loading from './loading'
 
 async function page({ searchParams }: SearchParamsProps) {
   const { q, filter } = await searchParams
@@ -12,6 +13,7 @@ async function page({ searchParams }: SearchParamsProps) {
     searchQuery: q,
     filter
   })
+
   return (
     <>
       <h1 className="h1-bold text-dark100_light900">All Tags</h1>

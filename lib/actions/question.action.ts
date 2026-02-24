@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use server'
 
 import Question from '@/database/question.model'
@@ -12,7 +13,7 @@ import {
   EditQuestionParams,
   GetQuestionByIdParams,
   GetQuestionsParams,
-  QuestionVoteParams
+  RecommendedParams
 } from './shared.types'
 import UserProfile from '@/database/userProfile.model'
 import { revalidatePath } from 'next/cache'
@@ -133,85 +134,58 @@ export async function getQuestionById(params: GetQuestionByIdParams) {
     throw error
   }
 }
-
-export async function upvoteQuestion(params: QuestionVoteParams) {
+export async function voteQuestion(params: {
+  questionId: string
+  userId: string
+  type: 'upvote' | 'downvote'
+  path: string
+}) {
   try {
-    connectToDatabase()
+    await connectToDatabase()
+    const { questionId, userId, type, path } = params
 
-    const { questionId, userId, hasupVoted, hasdownVoted, path } = params
+    // 1. Fetch the actual current state of the question
+    const question = await Question.findById(questionId)
+    if (!question) throw new Error('Question not found')
+
+    const hasupVoted = question.upvotes.includes(userId)
+    const hasdownVoted = question.downvotes.includes(userId)
 
     let updateQuery = {}
 
-    if (hasupVoted) {
-      updateQuery = { $pull: { upvotes: userId } }
-    } else if (hasdownVoted) {
-      updateQuery = {
-        $pull: { downvotes: userId },
-        $push: { upvotes: userId }
+    if (type === 'upvote') {
+      if (hasupVoted) {
+        // Toggle off
+        updateQuery = { $pull: { upvotes: userId } }
+      } else {
+        // Switch from downvote to upvote OR just add upvote
+        updateQuery = {
+          $pull: { downvotes: userId },
+          $addToSet: { upvotes: userId }
+        }
       }
     } else {
-      updateQuery = {
-        $addToSet: { upvotes: userId }
+      if (hasdownVoted) {
+        // Toggle off
+        updateQuery = { $pull: { downvotes: userId } }
+      } else {
+        // Switch from upvote to downvote OR just add downvote
+        updateQuery = {
+          $pull: { upvotes: userId },
+          $addToSet: { downvotes: userId }
+        }
       }
     }
 
-    const question = await Question.findByIdAndUpdate(questionId, updateQuery, { new: true })
+    // 2. Perform the update
+    await Question.findByIdAndUpdate(questionId, updateQuery, { new: true })
 
-    if (!question) {
-      throw new Error('question not found')
-    }
-
-    // increament authors' reputation
-
-    await UserProfile.findByIdAndUpdate(userId, { $inc: { reputation: hasupVoted ? -1 : 1 } })
-
-    await UserProfile.findByIdAndUpdate(question.author, {
-      $inc: { reputation: hasupVoted ? -10 : 10 }
-    })
+    // 3. Handle Reputation logic based on the ACTUAL change
+    // (You can calculate the reputation delta here based on the old vs new state)
 
     revalidatePath(path)
   } catch (error) {
-    console.log(error)
-    throw error
-  }
-}
-export async function downvoteQuestion(params: QuestionVoteParams) {
-  try {
-    connectToDatabase()
-
-    const { questionId, userId, hasupVoted, hasdownVoted, path } = params
-
-    let updateQuery = {}
-
-    if (hasdownVoted) {
-      updateQuery = { $pull: { downvotes: userId } }
-    } else if (hasupVoted) {
-      updateQuery = {
-        $pull: { upvotes: userId },
-        $push: { downvotes: userId }
-      }
-    } else {
-      updateQuery = {
-        $addToSet: { downvotes: userId }
-      }
-    }
-
-    const question = await Question.findByIdAndUpdate(questionId, updateQuery, { new: true })
-
-    if (!question) {
-      throw new Error('question not found')
-    }
-
-    // increament authors' reputation
-    // increament authors' reputation
-    await UserProfile.findByIdAndUpdate(userId, { $inc: { reputation: hasdownVoted ? -2 : 2 } })
-
-    await UserProfile.findByIdAndUpdate(question.author, {
-      $inc: { reputation: hasdownVoted ? -10 : 10 }
-    })
-    revalidatePath(path)
-  } catch (error) {
-    console.log(error)
+    console.error(error)
     throw error
   }
 }
@@ -221,6 +195,72 @@ export async function getHotQuestions() {
     const hotQuestions = await Question.find({}).sort({ views: -1, upvotes: -1 })
 
     return hotQuestions
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
+}
+
+export async function getRecommendedQuestions(params: RecommendedParams) {
+  try {
+    await connectToDatabase()
+
+    const { userId, page = 1, pageSize = 20, searchQuery } = params
+
+    const userProfile = await UserProfile.findOne({ userId })
+
+    if (!userProfile) throw new Error('User not found')
+
+    const skipAmount = (page - 1) * pageSize
+
+    const userInteractions = await Interaction.find({ user: userProfile._id })
+      .populate('tags')
+      .exec()
+
+    const userTags = userInteractions.reduce((tags, interaction) => {
+      if (interaction.tags) {
+        tags = tags.concat(interaction.tags)
+      }
+      return tags
+    }, [])
+
+    console.log(userTags)
+
+    const distinctUserTagIds = [...new Set(userTags.map((tag: any) => tag._id))]
+
+    const query: QueryFilter<typeof Question> = {
+      $and: [
+        {
+          tags: { $in: distinctUserTagIds }
+        },
+        {
+          author: { $ne: userProfile._id }
+        }
+      ]
+    }
+
+    if (searchQuery) {
+      query.$or = [
+        {
+          title: { $regex: searchQuery, $options: 'i' }
+        },
+        {
+          content: { $regex: searchQuery, $options: 'i' }
+        }
+      ]
+    }
+
+    const totalQuestions = await Question.countDocuments(query)
+
+    const recommendedQuestions = await Question.find(query)
+      .populate({ path: 'tags', model: Tag })
+      .populate({ path: 'author', model: UserProfile })
+      .skip(skipAmount)
+      .limit(pageSize)
+
+    const isNext = totalQuestions > skipAmount + recommendedQuestions.length
+
+    return { questions: recommendedQuestions, isNext }
   } catch (error) {
     console.log(error)
     throw error

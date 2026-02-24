@@ -1,7 +1,7 @@
 'use client'
-import { downvoteAnswer, upvoteAnswer } from '@/lib/actions/answer.action'
+import { voteAnswer } from '@/lib/actions/answer.action'
 import { viewQuestion } from '@/lib/actions/interaction.action'
-import { downvoteQuestion, upvoteQuestion } from '@/lib/actions/question.action'
+import { voteQuestion } from '@/lib/actions/question.action'
 import { toggleSaveQuestion } from '@/lib/actions/user.action'
 import { formatNumber } from '@/lib/utils'
 import { CircleCheckIcon, OctagonXIcon } from 'lucide-react'
@@ -37,6 +37,10 @@ const Votes = ({
       questionId: itemId,
       path: pathname
     })
+    return toast.info(!hasSaved ? 'Question Saved' : 'Question Unsaved', {
+      position: 'top-right',
+      icon: !hasSaved ? <CircleCheckIcon /> : <OctagonXIcon />
+    })
   }
   const handleVote = async (action: string) => {
     if (!userId) {
@@ -47,41 +51,39 @@ const Votes = ({
 
     if (action === 'upvote') {
       if (type === 'Question') {
-        await upvoteQuestion({
+        await voteQuestion({
           questionId: itemId.toString(),
           userId: userId.toString(),
-          hasupVoted,
-          hasdownVoted,
+          type: 'upvote',
           path: pathname
         })
       } else if (type === 'Answer') {
-        await upvoteAnswer({
+        await voteAnswer({
           answerId: itemId.toString(),
           userId: userId.toString(),
-          hasupVoted,
-          hasdownVoted,
+          type: 'upvote',
           path: pathname
         })
       }
       // todo: show a toast
-      return !hasupVoted
-        ? toast(`Upvote Successfully`, { position: 'top-right' })
-        : toast.error(`Upvote Removed`, { position: 'top-right', className: 'ss' })
+      return toast.error(!hasupVoted ? 'Upvote Successfull' : 'Upvote Removed', {
+        position: 'top-right',
+        icon: !hasupVoted ? <CircleCheckIcon /> : <OctagonXIcon />,
+        style: { backgroundColor: !hasupVoted ? 'green' : 'red', color: 'white' }
+      })
     } else if (action === 'downvote') {
       if (type === 'Question') {
-        await downvoteQuestion({
+        await voteQuestion({
           questionId: itemId.toString(),
           userId: userId.toString(),
-          hasupVoted,
-          hasdownVoted,
+          type: 'downvote',
           path: pathname
         })
       } else if (type === 'Answer') {
-        await downvoteAnswer({
+        await voteAnswer({
           answerId: itemId.toString(),
           userId: userId.toString(),
-          hasupVoted,
-          hasdownVoted,
+          type: 'downvote',
           path: pathname
         })
       }
@@ -89,7 +91,7 @@ const Votes = ({
       return toast.error(!hasdownVoted ? 'Downvote Successfull' : 'Downvote Removed', {
         position: 'top-right',
         icon: !hasdownVoted ? <CircleCheckIcon /> : <OctagonXIcon />,
-        style: { backgroundColor: !hasdownVoted ? 'green' : 'red' }
+        style: { backgroundColor: !hasdownVoted ? 'green' : 'red', color: 'white' }
       })
     }
   }

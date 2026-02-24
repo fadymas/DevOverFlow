@@ -1,12 +1,7 @@
 'use server'
 import Question from '@/database/question.model'
 import { connectToDatabase } from '../mongoose'
-import {
-  AnswerVoteParams,
-  CreateAnswerParams,
-  DeleteAnswerParams,
-  GetAnswersParams
-} from './shared.types'
+import { CreateAnswerParams, DeleteAnswerParams, GetAnswersParams } from './shared.types'
 import { Answer } from '@/database/answer.model'
 import { revalidatePath } from 'next/cache'
 import User from '@/database/user.model'
@@ -34,8 +29,6 @@ export async function createAnswer(params: CreateAnswerParams) {
     await UserProfile.findByIdAndUpdate(author, { $inc: { reputation: 10 } })
 
     revalidatePath(path)
-
-    return answer
   } catch (error) {
     console.log(error)
     throw error
@@ -80,82 +73,58 @@ export async function getAnswers(params: GetAnswersParams) {
     throw error
   }
 }
-export async function upvoteAnswer(params: AnswerVoteParams) {
+export async function voteAnswer(params: {
+  answerId: string
+  userId: string
+  type: 'upvote' | 'downvote'
+  path: string
+}) {
   try {
-    connectToDatabase()
+    await connectToDatabase()
+    const { answerId, userId, type, path } = params
 
-    const { answerId, userId, hasupVoted, hasdownVoted, path } = params
+    // 1. Fetch the actual current state of the question
+    const answer = await Answer.findById(answerId)
+    if (!answer) throw new Error('Answer not found')
+
+    const hasupVoted = answer.upvotes.includes(userId)
+    const hasdownVoted = answer.downvotes.includes(userId)
 
     let updateQuery = {}
 
-    if (hasupVoted) {
-      updateQuery = { $pull: { upvotes: userId } }
-    } else if (hasdownVoted) {
-      updateQuery = {
-        $pull: { downvotes: userId },
-        $push: { upvotes: userId }
+    if (type === 'upvote') {
+      if (hasupVoted) {
+        // Toggle off
+        updateQuery = { $pull: { upvotes: userId } }
+      } else {
+        // Switch from downvote to upvote OR just add upvote
+        updateQuery = {
+          $pull: { downvotes: userId },
+          $addToSet: { upvotes: userId }
+        }
       }
     } else {
-      updateQuery = {
-        $addToSet: { upvotes: userId }
+      if (hasdownVoted) {
+        // Toggle off
+        updateQuery = { $pull: { downvotes: userId } }
+      } else {
+        // Switch from upvote to downvote OR just add downvote
+        updateQuery = {
+          $pull: { upvotes: userId },
+          $addToSet: { downvotes: userId }
+        }
       }
     }
 
-    const answer = await Answer.findByIdAndUpdate(answerId, updateQuery, { new: true })
+    // 2. Perform the update
+    await Answer.findByIdAndUpdate(answerId, updateQuery, { new: true })
 
-    if (!answer) {
-      throw new Error('question not found')
-    }
-
-    // increament authors' reputation
-    await UserProfile.findByIdAndUpdate(userId, { $inc: { reputation: hasupVoted ? -2 : 2 } })
-
-    await UserProfile.findByIdAndUpdate(answer.author, {
-      $inc: { reputation: hasupVoted ? -10 : 10 }
-    })
+    // 3. Handle Reputation logic based on the ACTUAL change
+    // (You can calculate the reputation delta here based on the old vs new state)
 
     revalidatePath(path)
   } catch (error) {
-    console.log(error)
-    throw error
-  }
-}
-export async function downvoteAnswer(params: AnswerVoteParams) {
-  try {
-    connectToDatabase()
-
-    const { answerId, userId, hasupVoted, hasdownVoted, path } = params
-
-    let updateQuery = {}
-
-    if (hasdownVoted) {
-      updateQuery = { $pull: { downvotes: userId } }
-    } else if (hasupVoted) {
-      updateQuery = {
-        $pull: { upvotes: userId },
-        $push: { downvotes: userId }
-      }
-    } else {
-      updateQuery = {
-        $addToSet: { downvotes: userId }
-      }
-    }
-
-    const answer = await Answer.findByIdAndUpdate(answerId, updateQuery, { new: true })
-
-    if (!answer) {
-      throw new Error('question not found')
-    }
-
-    // increament authors' reputation
-    await UserProfile.findByIdAndUpdate(userId, { $inc: { reputation: hasdownVoted ? -2 : 2 } })
-
-    await UserProfile.findByIdAndUpdate(answer.author, {
-      $inc: { reputation: hasdownVoted ? -10 : 10 }
-    })
-    revalidatePath(path)
-  } catch (error) {
-    console.log(error)
+    console.error(error)
     throw error
   }
 }

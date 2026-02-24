@@ -27,7 +27,7 @@ async function UserCard({ user }: Props) {
               className="rounded-full"
             />
           ) : (
-            <CustomUserAvatar className="xs:size-25 " name={user.userId?.name} />
+            <CustomUserAvatar className="xs:size-25 size-25 " name={user.userId?.name} />
           )}
         </Link>
         <div className="mt-4 text-center">
