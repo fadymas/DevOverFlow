@@ -8,7 +8,6 @@ import { SearchParamsProps } from '@/types'
 import Link from 'next/link'
 import { use } from 'react'
 import { Metadata } from 'next'
-import Loading from './loading'
 
 export const metadata: Metadata = {
   title: 'Community',

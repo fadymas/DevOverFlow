@@ -2,7 +2,6 @@
 
 import { Button } from '@/components/ui/button'
 import { serverSession, useAuth } from '@/lib/auth/auth-client'
-import { redirect, useRouter } from 'next/navigation'
 
 interface Props {
   session: serverSession | null

@@ -1,8 +1,6 @@
 import { formatNumber, getTimeStamp } from '@/lib/utils'
 import Link from 'next/link'
 import Metric from '../shared/Metric'
-import { Button } from '../ui/button'
-import Image from 'next/image'
 import EditDeleteAction from '../shared/EditDeleteAction'
 import { getSession } from '@/lib/actions/auth-action'
 
