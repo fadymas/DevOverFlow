@@ -7,7 +7,11 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
-  allowedDevOrigins: ['http://localhost:3000', 'http://172.18.160.1:3000'],
+  allowedDevOrigins: [
+    'http://localhost:3000',
+    'http://172.18.160.1:3000',
+    'https://dev-over-flow-kohl.vercel.app/'
+  ],
   experimental: {
     mdxRs: true
   },

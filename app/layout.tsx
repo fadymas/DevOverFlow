@@ -5,6 +5,7 @@ import { Inter, Space_Grotesk } from 'next/font/google'
 import ThemeProvider from '@/context/ThemeProvider'
 import { cookies } from 'next/headers'
 import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -38,8 +39,11 @@ export default async function RootLayout({
   return (
     <html lang="en" className={theme}>
       <body className={`${inter.variable} ${spaceGrotesk.variable}`}>
-        <ThemeProvider cookieMode={theme}>{children}</ThemeProvider>
-        <Analytics />
+        <ThemeProvider cookieMode={theme}>
+          {children}
+          <Analytics />
+          <SpeedInsights />
+        </ThemeProvider>
       </body>
     </html>
   )
