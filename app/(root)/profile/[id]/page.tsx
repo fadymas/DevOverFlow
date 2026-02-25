@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: URLProps): Promise<Metadata> 
   }
 }
 
-async function Page({ params, searchParams }: URLProps) {
+async function Page({ params }: URLProps) {
   const { id } = await params
 
   const { user, totalQuestions, totalAnswers, badgeCounts, reputation } = await getUserInfo({
