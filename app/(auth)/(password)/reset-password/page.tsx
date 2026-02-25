@@ -17,6 +17,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+export const metadata = {
+  title: 'Reset Password',
+  description: 'Enter your new DevFlow password'
+}
+
 function ForgetPassword() {
   const { resetPassword } = useAuth()
   const form = useForm<z.infer<typeof resetPasswordSchema>>({

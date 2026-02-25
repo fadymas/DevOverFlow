@@ -3,6 +3,12 @@ import { getUserById } from '@/lib/actions/user.action'
 import { auth } from '@/lib/auth/auth'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Ask a Question',
+  description: 'Ask a question on DevFlow to get help from the community.'
+}
 
 async function AskQuestion() {
   const session = await auth.api.getSession({

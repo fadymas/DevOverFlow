@@ -7,6 +7,13 @@ import { getAllUsers } from '@/lib/actions/user.action'
 import { SearchParamsProps } from '@/types'
 import Link from 'next/link'
 import { use } from 'react'
+import { Metadata } from 'next'
+import Loading from './loading'
+
+export const metadata: Metadata = {
+  title: 'Community',
+  description: 'Join the DevFlow community and connect with other developers.'
+}
 
 function Page({ searchParams }: SearchParamsProps) {
   const { q, filter, page } = use(searchParams)

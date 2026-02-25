@@ -1,6 +1,12 @@
 import Profile from '@/components/forms/Profile'
 import { getSession } from '@/lib/actions/auth-action'
 import { getUserById } from '@/lib/actions/user.action'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Edit Profile',
+  description: 'Edit your DevFlow profile'
+}
 
 async function page() {
   const { session } = await getSession()

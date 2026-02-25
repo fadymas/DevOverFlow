@@ -11,6 +11,13 @@ import { use } from 'react'
 import { SearchParamsProps } from '@/types'
 import Pagination from '@/components/shared/Pagination'
 import { getSession } from '@/lib/actions/auth-action'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Home',
+  description:
+    'DevFlow is a community-driven platform for asking and answering programming questions.'
+}
 
 export default function Home({ searchParams }: SearchParamsProps) {
   const { q, filter, page } = use(searchParams)

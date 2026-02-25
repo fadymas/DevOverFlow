@@ -5,7 +5,12 @@ import { TagFilters } from '@/constants/filters'
 import { getAllTags } from '@/lib/actions/tag.action'
 import { SearchParamsProps } from '@/types'
 import Link from 'next/link'
-import Loading from './loading'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Tags',
+  description: 'Browse all tags on DevFlow to find topics that interest you.'
+}
 
 async function page({ searchParams }: SearchParamsProps) {
   const { q, filter } = await searchParams

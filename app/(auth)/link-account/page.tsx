@@ -2,6 +2,12 @@ import AuthActions from '@/components/auth/AuthActions'
 import AuthCard from '@/components/auth/AuthCard'
 import { CardContent } from '@/components/ui/card'
 import React from 'react'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Link Account',
+  description: 'Link your social account with your existing DevFlow account'
+}
 
 function LinkAccount() {
   return (

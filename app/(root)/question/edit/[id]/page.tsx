@@ -3,6 +3,15 @@ import { getSession } from '@/lib/actions/auth-action'
 import { getQuestionById } from '@/lib/actions/question.action'
 import { getUserById } from '@/lib/actions/user.action'
 import { ParamsProps } from '@/types'
+import { Metadata } from 'next'
+
+export async function generateMetadata({ params }: ParamsProps): Promise<Metadata> {
+  const { id } = await params
+  const result = await getQuestionById({ questionId: id })
+  return {
+    title: `Edit | ${result.title}`
+  }
+}
 
 async function page({ params }: ParamsProps) {
   const { session } = await getSession()

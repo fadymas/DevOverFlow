@@ -3,6 +3,12 @@ import AuthCard from '@/components/auth/AuthCard'
 import { CardContent } from '@/components/ui/card'
 import { SearchParamsProps } from '@/types'
 import { redirect } from 'next/navigation'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Check Email',
+  description: 'Check your email for password reset instructions'
+}
 
 async function CheckEmail({ searchParams }: SearchParamsProps) {
   const { email } = await searchParams

@@ -18,6 +18,12 @@ import AuthCard from '@/components/auth/AuthCard'
 import ProvidersSection from '@/components/auth/ProvidersSection'
 import AuthActions from '@/components/auth/AuthActions'
 import { useAuth } from '@/lib/auth/auth-client'
+
+export const metadata = {
+  title: 'Sign In',
+  description: 'Sign in to your DevFlow account'
+}
+
 function SignIn() {
   const { signIn } = useAuth()
   const form = useForm<z.infer<typeof signInSchema>>({

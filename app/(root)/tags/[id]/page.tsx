@@ -4,6 +4,20 @@ import NoResult from '@/components/shared/NoResult'
 import LocalSearch from '@/components/shared/search/LocalSearch'
 import { getQuestionsByTagId } from '@/lib/actions/tag.action'
 import { URLProps } from '@/types'
+import { Metadata } from 'next'
+
+export async function generateMetadata({ params, searchParams }: URLProps): Promise<Metadata> {
+  const { id } = await params
+  const { q } = await searchParams
+  const result = await getQuestionsByTagId({
+    tagId: id,
+    page: 1,
+    searchQuery: q
+  })
+  return {
+    title: result.tagTitle
+  }
+}
 
 async function Page({ params, searchParams }: URLProps) {
   const { id } = await params

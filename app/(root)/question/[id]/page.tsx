@@ -15,6 +15,16 @@ import { headers } from 'next/headers'
 import Image from 'next/image'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { Metadata } from 'next'
+
+export async function generateMetadata({ params }: URLProps): Promise<Metadata> {
+  const { id } = await params
+  const result = await getQuestionById({ questionId: id })
+  return {
+    title: result.title,
+    description: result.content.substring(0, 150)
+  }
+}
 
 export default async function page({ params, searchParams }: URLProps) {
   const { id } = await params

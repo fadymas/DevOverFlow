@@ -11,6 +11,16 @@ import QuestionTab from '@/components/shared/QuestionTab'
 import AnswersTab from '@/components/shared/AnswersTab'
 import { URLProps } from '@/types'
 import CustomUserAvatar from '@/components/shared/CustomUserAvatar'
+import { Metadata } from 'next'
+
+export async function generateMetadata({ params }: URLProps): Promise<Metadata> {
+  const { id } = await params
+  const { user } = await getUserInfo({ userId: id })
+  return {
+    title: `${user.userId.name}'s Profile`
+  }
+}
+
 async function Page({ params, searchParams }: URLProps) {
   const { id } = await params
 

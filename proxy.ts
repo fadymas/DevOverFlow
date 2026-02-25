@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { getSession } from './lib/actions/auth-action'
 
 export async function proxy() {
   return NextResponse.next()
@@ -6,5 +7,5 @@ export async function proxy() {
 
 // THIS IS THE KEY PART:
 export const config = {
-  matcher: ['/']
+  matcher: ['/api/:path*']
 }

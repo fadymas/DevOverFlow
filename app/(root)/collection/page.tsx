@@ -9,6 +9,12 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { QuestionFilters } from '@/constants/filters'
 import { SearchParamsProps } from '@/types'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Collection',
+  description: 'View your saved questions on DevFlow.'
+}
 
 export default async function Home({ searchParams }: SearchParamsProps) {
   const { q, filter, page } = await searchParams
