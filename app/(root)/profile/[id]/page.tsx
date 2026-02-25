@@ -105,7 +105,7 @@ async function Page({ params, searchParams }: URLProps) {
             <QuestionTab userId={user._id.toString()} />
           </TabsContent>
           <TabsContent value="answers" className="flex w-full flex-col gap-6">
-            <AnswersTab userId={user._id.toString()} searchParams={searchParams} />
+            <AnswersTab userId={user._id.toString()} />
           </TabsContent>
         </Tabs>
       </div>
