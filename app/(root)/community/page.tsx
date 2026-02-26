@@ -37,7 +37,7 @@ function Page({ searchParams }: SearchParamsProps) {
         />
         <Filter filters={UserFilters} otherClasses="min-h-[56px] sm:min-w-[170px] w-full" />
       </div>
-      <section className="mt-12 flex justify-between flex-wrap gap-4">
+      <section className="mt-12 flex justify-start flex-wrap gap-4">
         {result.users.length > 0 ? (
           result.users.map((user) => <UserCard key={String(user._id)} user={user} />)
         ) : (
