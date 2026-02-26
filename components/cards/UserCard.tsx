@@ -16,7 +16,7 @@ async function UserCard({ user }: Props) {
 
   return (
     <div className="shadow-light100_darknone w-full max-xs:min-w-full xs:w-65">
-      <article className="flex w-full flex-col items-center justify-center rounded-2xl border p-8 background-light900_dark200 light-border">
+      <article className="flex w-full flex-col items-center justify-start rounded-2xl border p-8 px-1 background-light900_dark200 light-border">
         <Link href={`/profile/${user.userId?._id}`}>
           {user.userId?.image ? (
             <Image
@@ -37,7 +37,12 @@ async function UserCard({ user }: Props) {
           {interactedTags.length > 0 ? (
             <div className="flex items-center gap-2">
               {interactedTags.map((tag) => (
-                <RenderTag key={tag._id} _id={tag._id} name={tag.name} />
+                <RenderTag
+                  key={tag._id}
+                  _id={tag._id}
+                  name={tag.name}
+                  className=" justify-center text-ellipsis line-clamp-1 w-full"
+                />
               ))}
             </div>
           ) : (
