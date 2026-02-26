@@ -62,13 +62,23 @@ function Answer({ question, questionId, userId }: Props) {
         body: JSON.stringify({ question })
       })
 
-      const aiAnswer = await response.json()
+      if (response.ok) {
+        const aiAnswer = await response.json()
 
-      const formattedAnswer = aiAnswer.reply.replace(/\n/g, '<br>')
-      console.log(typeof formattedAnswer)
-      if (editorRef.current) {
-        const editor = editorRef.current as any
-        editor.setContent(formattedAnswer)
+        const formattedAnswer = aiAnswer.reply.replace(/\n/g, '<br>')
+        if (editorRef.current) {
+          const editor = editorRef.current as any
+          editor.setContent(formattedAnswer)
+        }
+      } else {
+        form.setError('answer', { message: response.statusText })
+        toast.error('Too many requests. Please try again later.', {
+          position: 'top-right',
+          style: {
+            background: 'var(--destructive)',
+            color: 'white'
+          }
+        })
       }
 
       // Toast...

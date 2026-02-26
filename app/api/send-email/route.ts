@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server'
 import { createTransport } from 'nodemailer'
 export async function POST(request: Request) {
   const body = await request.json()
-  console.log({ body })
   const message = {
     from: 'Devflow@project.dev',
     to: body.email,
@@ -25,7 +24,6 @@ export async function POST(request: Request) {
     }
   })
 
-  console.log(JSON.stringify(body))
   try {
     await transporter.sendMail(message)
     return NextResponse.json({ message: 'Email Sent Successfully' }, { status: 200 })
