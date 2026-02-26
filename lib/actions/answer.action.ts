@@ -91,36 +91,49 @@ export async function voteAnswer(params: {
     const hasdownVoted = answer.downvotes.includes(userId)
 
     let updateQuery = {}
+    let userReputationDelta = 0
+    let authorReputationDelta = 0
 
     if (type === 'upvote') {
       if (hasupVoted) {
         // Toggle off
         updateQuery = { $pull: { upvotes: userId } }
+        userReputationDelta = -5
+        authorReputationDelta = -10
       } else {
         // Switch from downvote to upvote OR just add upvote
         updateQuery = {
           $pull: { downvotes: userId },
           $addToSet: { upvotes: userId }
         }
+        userReputationDelta = hasdownVoted ? 10 : 5
+        authorReputationDelta = hasdownVoted ? 20 : 10
       }
     } else {
       if (hasdownVoted) {
         // Toggle off
         updateQuery = { $pull: { downvotes: userId } }
+        userReputationDelta = 5
+        authorReputationDelta = 10
       } else {
         // Switch from upvote to downvote OR just add downvote
         updateQuery = {
           $pull: { upvotes: userId },
           $addToSet: { downvotes: userId }
         }
+        userReputationDelta = hasupVoted ? -10 : -5
+        authorReputationDelta = hasupVoted ? -20 : -10
       }
     }
 
     // 2. Perform the update
     await Answer.findByIdAndUpdate(answerId, updateQuery, { new: true })
 
-    // 3. Handle Reputation logic based on the ACTUAL change
-    // (You can calculate the reputation delta here based on the old vs new state)
+    // 3. Update User Reputation
+    await UserProfile.findByIdAndUpdate(userId, { $inc: { reputation: userReputationDelta } })
+    await UserProfile.findByIdAndUpdate(answer.author, {
+      $inc: { reputation: authorReputationDelta }
+    })
 
     revalidatePath(path)
   } catch (error) {
