@@ -19,6 +19,9 @@ const spaceGrotesk = Space_Grotesk({
 })
 
 export const metadata: Metadata = {
+  verification: {
+    google: 'gDo-bQE_5gQoEWlpOsKdHaMRERDv7C4pK3XwHPKC3dk'
+  },
   title: {
     template: '%s | DevOverFlow',
     default: 'DevOverFlow'
