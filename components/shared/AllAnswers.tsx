@@ -24,7 +24,7 @@ async function AllAnswers({ questionId, userId, totalAnswers, page, filter }: Pr
         <Filter filters={AnswerFilters} />
       </div>
       <div>
-        {result.answers.map((answer) => (
+        {result?.answers.map((answer) => (
           <article key={answer._id} className="light-border border-b py-10">
             <div className="flex items-center ">
               <div className="mb-8 flex flex-row justify-between gap-5 sm:flex-row sm:items-center sm:gap-2 w-full">
