@@ -31,6 +31,5 @@ export async function viewQuestion(params: ViewQuestionParams) {
     }
   } catch (error) {
     console.log(error)
-    throw error
   }
 }

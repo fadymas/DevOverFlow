@@ -18,6 +18,7 @@ import {
 import UserProfile from '@/database/userProfile.model'
 import { revalidatePath } from 'next/cache'
 import { QueryFilter } from 'mongoose'
+import { authActionClient } from '../safe-action'
 
 export async function getQuestions(params: GetQuestionsParams) {
   try {
@@ -79,6 +80,10 @@ export async function createQuestion(params: CreateQuestionParams) {
 
     const { title, content, tags, author, path } = params
 
+    const { userId } = await authActionClient()
+    const user = await UserProfile.findOne({ userId })
+    if (JSON.stringify(user._id) !== JSON.stringify(author)) throw new Error('Not allowed User')
+
     const question = await Question.create({ title, content, author })
 
     const tagDocuments = []
@@ -108,7 +113,6 @@ export async function createQuestion(params: CreateQuestionParams) {
     revalidatePath(path)
   } catch (error) {
     console.log(error)
-    throw error
   }
 }
 
@@ -131,7 +135,6 @@ export async function getQuestionById(params: GetQuestionByIdParams) {
     return question
   } catch (error) {
     console.log(error)
-    throw error
   }
 }
 export async function voteQuestion(params: {
@@ -144,6 +147,8 @@ export async function voteQuestion(params: {
     await connectToDatabase()
     const { questionId, userId, type, path } = params
 
+    const { userId: id } = await authActionClient()
+    if (id !== userId) throw new Error('Not Allowed User')
     // 1. Fetch the actual current state of the question
     const question = await Question.findById(questionId)
     if (!question) throw new Error('Question not found')
@@ -199,7 +204,6 @@ export async function voteQuestion(params: {
     revalidatePath(path)
   } catch (error) {
     console.error(error)
-    throw error
   }
 }
 export async function getHotQuestions() {
@@ -283,13 +287,20 @@ export async function getRecommendedQuestions(params: RecommendedParams) {
 export async function deleteQuestion(params: DeleteQuestionParams) {
   try {
     connectToDatabase()
+    const { userId } = await authActionClient()
 
     const { questionId, path } = params
+    const user = await UserProfile.findOne({ userId })
+    const question = await Question.findById(questionId)
 
-    await Question.deleteOne({ _id: questionId })
-    await Answer.deleteMany({ question: questionId })
-    await Interaction.deleteMany({ question: questionId })
-    await Tag.updateMany({ questions: questionId }, { $pull: { questions: questionId } })
+    if (JSON.stringify(user._id) === JSON.stringify(question.author._id)) {
+      await Question.deleteOne({ _id: questionId })
+      await Answer.deleteMany({ question: questionId })
+      await Interaction.deleteMany({ question: questionId })
+      await Tag.updateMany({ questions: questionId }, { $pull: { questions: questionId } })
+    } else {
+      throw new Error("You don't own this question.")
+    }
 
     revalidatePath(path)
   } catch (error) {
@@ -304,7 +315,11 @@ export async function editQuestion(params: EditQuestionParams) {
 
     const { questionId, title, content, path } = params
 
+    const { userId } = await authActionClient()
+    const user = await UserProfile.findOne({ userId })
     const question = await Question.findById(questionId).populate('tags')
+    if (JSON.stringify(user?._id) !== JSON.stringify(question?.author._id))
+      throw new Error('Not allowed User')
 
     if (!question) {
       throw new Error('question not found')
@@ -317,6 +332,5 @@ export async function editQuestion(params: EditQuestionParams) {
     revalidatePath(path)
   } catch (error) {
     console.log(error)
-    throw error
   }
 }

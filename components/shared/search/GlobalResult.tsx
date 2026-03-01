@@ -24,10 +24,9 @@ function GlobalResult() {
       try {
         // everything everywhere all at once
         const res = await globalSearch({ query: global, type })
-        setResult(JSON.parse(res))
+        setResult(JSON.parse(res!))
       } catch (error) {
         console.log(error)
-        throw error
       } finally {
         setIsLoading(false)
       }

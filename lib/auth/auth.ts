@@ -44,6 +44,9 @@ export const auth = betterAuth({
         }
       })
     },
+    async afterEmailVerification(user) {
+      await createUser({ id: user.id })
+    },
     autoSignInAfterVerification: true
   },
   socialProviders: {
@@ -78,7 +81,9 @@ export const auth = betterAuth({
     user: {
       create: {
         after: async (user) => {
-          await createUser({ id: user.id })
+          if (user.emailVerified) {
+            await createUser({ id: user.id })
+          }
         }
       }
     }

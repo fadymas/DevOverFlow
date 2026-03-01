@@ -17,6 +17,7 @@ import Question from '@/database/question.model'
 import { Answer } from '@/database/answer.model'
 import { BadgeCriteriaType } from '@/types'
 import { assignBadges } from '../utils'
+import { authActionClient } from '../safe-action'
 
 export async function createUser(params: { id: string }) {
   try {
@@ -36,7 +37,7 @@ export async function getUserById(params: GetUserByIdParams) {
     const user = await UserProfile.findOne({ userId: userId }).populate({
       path: 'userId',
       model: User,
-      select: ' name image'
+      select: '_id name image'
     })
     return user
   } catch (error) {
@@ -309,13 +310,14 @@ export async function updateUser(params: UpdateUserParams) {
   try {
     connectToDatabase()
 
-    const { authId, updateData, path } = params
+    const { updateData, path } = params
+    const { userId } = await authActionClient()
     const { bio, location, portfolioWebsite, name } = updateData
 
-    await User.findOneAndUpdate({ authId }, { name }, { new: true })
+    await User.findOneAndUpdate({ _id: userId }, { name }, { new: true })
 
     await UserProfile.findOneAndUpdate(
-      { userId: authId },
+      { userId: userId },
       { bio, location, portfolioWebsite },
       { new: true }
     )
@@ -323,6 +325,5 @@ export async function updateUser(params: UpdateUserParams) {
     revalidatePath(path)
   } catch (error) {
     console.log(error)
-    throw error
   }
 }
