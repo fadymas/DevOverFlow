@@ -148,7 +148,8 @@ export async function voteQuestion(params: {
     const { questionId, userId, type, path } = params
 
     const { userId: id } = await authActionClient()
-    if (id !== userId) throw new Error('Not Allowed User')
+    const user = await UserProfile.findOne({ userId: id })
+    if (JSON.stringify(user._id) !== JSON.stringify(userId)) throw new Error('Not Allowed User')
     // 1. Fetch the actual current state of the question
     const question = await Question.findById(questionId)
     if (!question) throw new Error('Question not found')

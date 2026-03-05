@@ -7,13 +7,21 @@ import { revalidatePath } from 'next/cache'
 import User from '@/database/user.model'
 import Interaction from '@/database/interaction.model'
 import UserProfile from '@/database/userProfile.model'
+import { authActionClient } from '../safe-action'
 
 export async function createAnswer(params: CreateAnswerParams) {
+  const { userId } = await authActionClient()
+
   const { author, question, content, path } = params
+
   try {
     connectToDatabase()
+    const user = await UserProfile.findOne({ userId })
     const answer = await Answer.create({ author, question, content })
-
+    // Ensure the authenticated user matches the author
+    if (user._id.toString() !== author) {
+      throw new Error('Unauthorized: You can only post answers as yourself.')
+    }
     const questionObject = await Question.findByIdAndUpdate(question, {
       $push: { answers: answer._id }
     })
@@ -33,7 +41,9 @@ export async function createAnswer(params: CreateAnswerParams) {
     console.log(error)
   }
 }
+
 export async function getAnswers(params: GetAnswersParams) {
+  // Public read action — no auth required
   try {
     connectToDatabase()
 
@@ -53,7 +63,6 @@ export async function getAnswers(params: GetAnswersParams) {
       case 'old':
         sortOptions = { createdAt: 1 }
         break
-
       default:
         break
     }
@@ -71,17 +80,25 @@ export async function getAnswers(params: GetAnswersParams) {
     console.log(error)
   }
 }
+
 export async function voteAnswer(params: {
   answerId: string
   userId: string
   type: 'upvote' | 'downvote'
   path: string
 }) {
+  const { userId: sessionUserId } = await authActionClient()
+
+  const { answerId, userId, type, path } = params
+
+  // Ensure the authenticated user matches the userId in the request
+
   try {
     await connectToDatabase()
-    const { answerId, userId, type, path } = params
-
-    // 1. Fetch the actual current state of the question
+    const user = await UserProfile.findOne({ userId: sessionUserId })
+    if (user._id.toString() !== userId) {
+      throw new Error('Unauthorized: You can only vote as yourself.')
+    }
     const answer = await Answer.findById(answerId)
     if (!answer) throw new Error('Answer not found')
 
@@ -94,12 +111,10 @@ export async function voteAnswer(params: {
 
     if (type === 'upvote') {
       if (hasupVoted) {
-        // Toggle off
         updateQuery = { $pull: { upvotes: userId } }
         userReputationDelta = -5
         authorReputationDelta = -10
       } else {
-        // Switch from downvote to upvote OR just add upvote
         updateQuery = {
           $pull: { downvotes: userId },
           $addToSet: { upvotes: userId }
@@ -109,12 +124,10 @@ export async function voteAnswer(params: {
       }
     } else {
       if (hasdownVoted) {
-        // Toggle off
         updateQuery = { $pull: { downvotes: userId } }
         userReputationDelta = 5
         authorReputationDelta = 10
       } else {
-        // Switch from upvote to downvote OR just add downvote
         updateQuery = {
           $pull: { upvotes: userId },
           $addToSet: { downvotes: userId }
@@ -124,10 +137,8 @@ export async function voteAnswer(params: {
       }
     }
 
-    // 2. Perform the update
     await Answer.findByIdAndUpdate(answerId, updateQuery, { new: true })
 
-    // 3. Update User Reputation
     await UserProfile.findByIdAndUpdate(userId, { $inc: { reputation: userReputationDelta } })
     await UserProfile.findByIdAndUpdate(answer.author, {
       $inc: { reputation: authorReputationDelta }
@@ -138,15 +149,22 @@ export async function voteAnswer(params: {
     console.error(error)
   }
 }
+
 export async function deleteAnswer(params: DeleteAnswerParams) {
+  const { userId: sessionUserId } = await authActionClient()
+
+  const { answerId, path } = params
+
   try {
     connectToDatabase()
-
-    const { answerId, path } = params
-
+    const user = await UserProfile.findOne({ userId: sessionUserId })
     const answer = await Answer.findById(answerId)
     if (!answer) {
-      throw new Error('answer not found')
+      throw new Error('Answer not found')
+    }
+    // Ensure the authenticated user is the author of the answer
+    if (answer.author.toString() !== user._id.toString()) {
+      throw new Error('Unauthorized: You can only delete your own answers.')
     }
 
     await Answer.deleteOne({ _id: answerId })
