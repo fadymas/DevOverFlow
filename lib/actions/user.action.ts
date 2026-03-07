@@ -18,11 +18,22 @@ import { Answer } from '@/database/answer.model'
 import { BadgeCriteriaType } from '@/types'
 import { assignBadges } from '../utils'
 import { authActionClient } from '../safe-action'
+import {
+  GetAllUsersServerSchema,
+  GetSavedQuestionsServerSchema,
+  GetUserByIdServerSchema,
+  GetUserStatsServerSchema,
+  ToggleSaveQuestionServerSchema,
+  UpdateUserServerSchema
+} from '../validations'
 
 export async function createUser(params: { id: string }) {
   try {
     connectToDatabase()
     const { id } = params
+    if (!id || typeof id !== 'string' || id.trim().length === 0) {
+      throw new Error('Validation failed: user id is required')
+    }
     await UserProfile.create({ userId: id })
   } catch (error) {
     console.log(error)
@@ -33,7 +44,11 @@ export async function createUser(params: { id: string }) {
 export async function getUserById(params: GetUserByIdParams) {
   try {
     connectToDatabase()
-    const { userId } = params
+    const parsed = GetUserByIdServerSchema.safeParse(params)
+    if (!parsed.success) {
+      throw new Error(`Validation failed: ${parsed.error.message}`)
+    }
+    const { userId } = parsed.data
     const user = await UserProfile.findOne({ userId: userId }).populate({
       path: 'userId',
       model: User,
@@ -49,9 +64,12 @@ export async function getUserById(params: GetUserByIdParams) {
 export async function getAllUsers(params: GetAllUsersParams) {
   try {
     connectToDatabase()
-    const { searchQuery, filter, page = 1, pageSize = 10 } = params
+    const parsed = GetAllUsersServerSchema.safeParse(params)
+    if (!parsed.success) {
+      throw new Error(`Validation failed: ${parsed.error.message}`)
+    }
+    const { searchQuery, filter, page = 1, pageSize = 10 } = parsed.data
 
-    //calculate the number of posts to skip based on the page number and size
     const skipAmount = (page - 1) * pageSize
 
     const query: QueryFilter<typeof UserProfile> = {}
@@ -75,10 +93,8 @@ export async function getAllUsers(params: GetAllUsersParams) {
       case 'top_contributor':
         sortOptions = { reputation: -1 }
         break
-
       default:
         sortOptions = { joinedAt: -1 }
-
         break
     }
 
@@ -92,9 +108,7 @@ export async function getAllUsers(params: GetAllUsersParams) {
         }
       },
       { $unwind: '$userId' },
-      {
-        $match: query
-      },
+      { $match: query },
       { $skip: skipAmount },
       { $limit: pageSize },
       { $sort: sortOptions }
@@ -113,9 +127,14 @@ export async function getAllUsers(params: GetAllUsersParams) {
 export async function toggleSaveQuestion(params: ToggleSaveQuestionParams) {
   try {
     connectToDatabase()
-    const { userId, questionId, path } = params
+    const parsed = ToggleSaveQuestionServerSchema.safeParse(params)
+    if (!parsed.success) {
+      throw new Error(`Validation failed: ${parsed.error.message}`)
+    }
+    const { questionId, path } = parsed.data
+    const { userId } = await authActionClient()
 
-    const user = await UserProfile.findById(userId)
+    const user = await UserProfile.findOne({ userId })
 
     if (!user) {
       throw new Error('user not found')
@@ -124,11 +143,14 @@ export async function toggleSaveQuestion(params: ToggleSaveQuestionParams) {
     const isQuestionSaved = user.saved.includes(questionId)
 
     if (isQuestionSaved) {
-      //remove question from saved
-      await UserProfile.findByIdAndUpdate(userId, { $pull: { saved: questionId } }, { new: true })
+      await UserProfile.findOneAndUpdate(
+        { userId },
+        { $pull: { saved: questionId } },
+        { new: true }
+      )
     } else {
-      await UserProfile.findByIdAndUpdate(
-        userId,
+      await UserProfile.findOneAndUpdate(
+        { userId },
         { $addToSet: { saved: questionId } },
         { new: true }
       )
@@ -137,15 +159,18 @@ export async function toggleSaveQuestion(params: ToggleSaveQuestionParams) {
     revalidatePath(path)
   } catch (error) {
     console.log(error)
-    throw error
   }
 }
 
 export async function getSavedQuestions(params: GetSavedQuestionsParams) {
   try {
     connectToDatabase()
+    const parsed = GetSavedQuestionsServerSchema.safeParse(params)
+    if (!parsed.success) {
+      throw new Error(`Validation failed: ${parsed.error.message}`)
+    }
 
-    const { userId, filter, searchQuery, page = 1, pageSize = 20 } = params
+    const { userId, filter, searchQuery, page = 1, pageSize = 20 } = parsed.data
 
     const query: QueryFilter<typeof Question> = searchQuery
       ? { title: { $regex: new RegExp(searchQuery, 'i') } }
@@ -171,7 +196,6 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
       case 'most_answered':
         sortOptions = { answers: -1 }
         break
-
       default:
         sortOptions = { createdAt: -1 }
         break
@@ -212,7 +236,11 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
 export async function getUserInfo(params: GetUserByIdParams) {
   try {
     connectToDatabase()
-    const { userId } = params
+    const parsed = GetUserByIdServerSchema.safeParse(params)
+    if (!parsed.success) {
+      throw new Error(`Validation failed: ${parsed.error.message}`)
+    }
+    const { userId } = parsed.data
 
     const user = await UserProfile.findOne({ userId: userId }).populate({
       path: 'userId',
@@ -262,8 +290,12 @@ export async function getUserInfo(params: GetUserByIdParams) {
 export async function getUsersQuestions(params: GetUserStatsParams) {
   try {
     connectToDatabase()
+    const parsed = GetUserStatsServerSchema.safeParse(params)
+    if (!parsed.success) {
+      throw new Error(`Validation failed: ${parsed.error.message}`)
+    }
 
-    const { userId } = params
+    const { userId } = parsed.data
 
     const totalQuestions = await Question.countDocuments({ author: userId })
 
@@ -282,11 +314,16 @@ export async function getUsersQuestions(params: GetUserStatsParams) {
     throw error
   }
 }
+
 export async function getUserAnswers(params: GetUserStatsParams) {
   try {
     connectToDatabase()
+    const parsed = GetUserStatsServerSchema.safeParse(params)
+    if (!parsed.success) {
+      throw new Error(`Validation failed: ${parsed.error.message}`)
+    }
 
-    const { userId } = params
+    const { userId } = parsed.data
 
     const totalAnswers = await Answer.countDocuments({ author: userId })
 
@@ -309,10 +346,13 @@ export async function getUserAnswers(params: GetUserStatsParams) {
 export async function updateUser(params: UpdateUserParams) {
   try {
     connectToDatabase()
+    const parsed = UpdateUserServerSchema.safeParse({ ...params.updateData, path: params.path })
+    if (!parsed.success) {
+      throw new Error(`Validation failed: ${parsed.error.message}`)
+    }
 
-    const { updateData, path } = params
+    const { path, bio, location, portfolioWebsite, name } = parsed.data
     const { userId } = await authActionClient()
-    const { bio, location, portfolioWebsite, name } = updateData
 
     await User.findOneAndUpdate({ _id: userId }, { name }, { new: true })
 

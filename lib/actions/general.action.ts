@@ -7,14 +7,21 @@ import { SearchParams } from './shared.types'
 import { Answer } from '@/database/answer.model'
 import Tag from '@/database/tag.model'
 import UserProfile from '@/database/userProfile.model'
+import { GlobalSearchServerSchema } from '../validations'
 
 const searchableTypes = ['question', 'answer', 'user', 'tag']
 
 export async function globalSearch(params: SearchParams) {
   try {
-    await connectToDatabase()
+    connectToDatabase()
+    const parsed = GlobalSearchServerSchema.safeParse(params)
+    if (!parsed.success) {
+      throw new Error(`Validation failed: ${parsed.error.message}`)
+    }
 
-    const { query, type } = params
+    const { query, type } = parsed.data
+    if (!query) return JSON.stringify([])
+
     const regexQuery = { $regex: query, $options: 'i' }
 
     let results: any = []
@@ -29,7 +36,6 @@ export async function globalSearch(params: SearchParams) {
     const typeLower = type?.toLowerCase()
 
     if (!typeLower || !searchableTypes.includes(typeLower)) {
-      // search acroos everything
       for (const { model, searchField, type } of modelsAndTypes) {
         if (type === 'user') {
           const queryResults = await model.aggregate([
@@ -70,7 +76,6 @@ export async function globalSearch(params: SearchParams) {
         }
       }
     } else {
-      //search in the specified model type
       const modelInfo = modelsAndTypes.find((item) => item.type === typeLower)
 
       if (!modelInfo) throw new Error('invalid search type')

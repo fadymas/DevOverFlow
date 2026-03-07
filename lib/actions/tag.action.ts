@@ -11,23 +11,27 @@ import Tag, { ITag } from '@/database/tag.model'
 import { QueryFilter } from 'mongoose'
 import Question from '@/database/question.model'
 import User from '@/database/user.model'
+import {
+  GetAllTagsServerSchema,
+  GetQuestionsByTagIdServerSchema,
+  GetTopInteractedTagsServerSchema
+} from '../validations'
 
 export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
   try {
     connectToDatabase()
+    const parsed = GetTopInteractedTagsServerSchema.safeParse(params)
+    if (!parsed.success) {
+      throw new Error(`Validation failed: ${parsed.error.message}`)
+    }
 
-    const { userId, limit = 3 } = params
+    const { userId, limit = 3 } = parsed.data
     const user = await UserProfile.findById(userId)
     if (!user) throw new Error('user not found')
 
     const topTags = await Question.aggregate([
-      // 1️⃣ هات أسئلة المستخدم
       { $match: { author: user._id } },
-
-      // 2️⃣ فك Array التاجات
       { $unwind: '$tags' },
-
-      // 3️⃣ اعمل join مع tags collection
       {
         $lookup: {
           from: 'tag',
@@ -36,11 +40,7 @@ export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
           as: 'tag'
         }
       },
-
-      // 4️⃣ فك Array اللي جاية من lookup
       { $unwind: '$tag' },
-
-      // 5️⃣ عدّ استخدام كل تاج
       {
         $group: {
           _id: '$tag._id',
@@ -48,15 +48,10 @@ export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
           count: { $sum: 1 }
         }
       },
-
-      // 6️⃣ رتّب من الأكبر للأصغر
       { $sort: { count: -1 } },
-
-      // 7️⃣ هات أول 3 بس
       { $limit: limit }
     ])
 
-    // Find interactions for the user and group by tags
     return topTags
   } catch (error) {
     console.log(error)
@@ -67,7 +62,11 @@ export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
 export async function getAllTags(params: GetAllTagsParams) {
   try {
     connectToDatabase()
-    const { searchQuery, filter } = params
+    const parsed = GetAllTagsServerSchema.safeParse(params)
+    if (!parsed.success) {
+      throw new Error(`Validation failed: ${parsed.error.message}`)
+    }
+    const { searchQuery, filter } = parsed.data
     const query: QueryFilter<typeof Tag> = {}
 
     if (searchQuery) {
@@ -92,7 +91,6 @@ export async function getAllTags(params: GetAllTagsParams) {
       case 'old':
         sortOptions = { createdOn: 1 }
         break
-
       default:
         break
     }
@@ -108,7 +106,11 @@ export async function getAllTags(params: GetAllTagsParams) {
 export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
   try {
     connectToDatabase()
-    const { tagId, searchQuery } = params
+    const parsed = GetQuestionsByTagIdServerSchema.safeParse(params)
+    if (!parsed.success) {
+      throw new Error(`Validation failed: ${parsed.error.message}`)
+    }
+    const { tagId, searchQuery } = parsed.data
 
     const tagFilter: QueryFilter<ITag> = { _id: tagId }
     const tag = await Tag.findOne(tagFilter).populate({

@@ -8,14 +8,26 @@ import User from '@/database/user.model'
 import Interaction from '@/database/interaction.model'
 import UserProfile from '@/database/userProfile.model'
 import { authActionClient } from '../safe-action'
+import {
+  CreateAnswerServerSchema,
+  DeleteAnswerServerSchema,
+  GetAnswersServerSchema,
+  VoteAnswerServerSchema
+} from '../validations'
 
 export async function createAnswer(params: CreateAnswerParams) {
   const { userId } = await authActionClient()
 
-  const { author, question, content, path } = params
-
   try {
     connectToDatabase()
+
+    const parsed = CreateAnswerServerSchema.safeParse(params)
+    if (!parsed.success) {
+      throw new Error(`Validation failed: ${parsed.error.message}`)
+    }
+
+    const { author, question, content, path } = parsed.data
+
     const user = await UserProfile.findOne({ userId })
     const answer = await Answer.create({ author, question, content })
     // Ensure the authenticated user matches the author
@@ -44,10 +56,15 @@ export async function createAnswer(params: CreateAnswerParams) {
 
 export async function getAnswers(params: GetAnswersParams) {
   // Public read action — no auth required
+  const parsed = GetAnswersServerSchema.safeParse(params)
+  if (!parsed.success) {
+    throw new Error(`Validation failed: ${parsed.error.message}`)
+  }
+
   try {
     connectToDatabase()
 
-    const { questionId, sortBy } = params
+    const { questionId, sortBy } = parsed.data
 
     let sortOptions = {}
     switch (sortBy) {
@@ -89,12 +106,16 @@ export async function voteAnswer(params: {
 }) {
   const { userId: sessionUserId } = await authActionClient()
 
-  const { answerId, userId, type, path } = params
-
-  // Ensure the authenticated user matches the userId in the request
-
   try {
     await connectToDatabase()
+
+    const parsed = VoteAnswerServerSchema.safeParse(params)
+    if (!parsed.success) {
+      throw new Error(`Validation failed: ${parsed.error.message}`)
+    }
+
+    const { answerId, userId, type, path } = parsed.data
+
     const user = await UserProfile.findOne({ userId: sessionUserId })
     if (user._id.toString() !== userId) {
       throw new Error('Unauthorized: You can only vote as yourself.')
@@ -151,12 +172,17 @@ export async function voteAnswer(params: {
 }
 
 export async function deleteAnswer(params: DeleteAnswerParams) {
-  const { userId: sessionUserId } = await authActionClient()
-
-  const { answerId, path } = params
-
   try {
     connectToDatabase()
+
+    const { userId: sessionUserId } = await authActionClient()
+
+    const parsed = DeleteAnswerServerSchema.safeParse(params)
+    if (!parsed.success) {
+      throw new Error(`Validation failed: ${parsed.error.message}`)
+    }
+
+    const { answerId, path } = parsed.data
     const user = await UserProfile.findOne({ userId: sessionUserId })
     const answer = await Answer.findById(answerId)
     if (!answer) {
