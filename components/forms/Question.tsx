@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod/v4-mini'
 
-import { Button } from '@/components/ui/button'
+import { MotionButton } from '@/components/ui/button'
 import {
   Form,
   FormControl,
@@ -227,7 +227,7 @@ function Question({ mongoUserId, questionDetails, type }: Props) {
             </FormItem>
           )}
         />
-        <Button
+        <MotionButton
           type="submit"
           className="primary-gradient w-fit text-light-900!"
           disabled={form.formState.isSubmitting}
@@ -237,7 +237,7 @@ function Question({ mongoUserId, questionDetails, type }: Props) {
           ) : (
             <>{type === 'Edit' ? 'Edit Question' : 'Ask a Question'}</>
           )}
-        </Button>
+        </MotionButton>
       </form>
     </Form>
   )

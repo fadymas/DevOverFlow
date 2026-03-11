@@ -3,7 +3,7 @@ import Filter from '@/components/shared/Filter'
 import NoResult from '@/components/shared/NoResult'
 import QuestionCard from '@/components/cards/QuestionCard'
 import LocalSearch from '@/components/shared/search/LocalSearch'
-import { Button } from '@/components/ui/button'
+import { MotionButton } from '@/components/ui/button'
 import { HomePageFilters } from '@/constants/filters'
 import { getQuestions, getRecommendedQuestions } from '@/lib/actions/question.action'
 import Link from 'next/link'
@@ -54,9 +54,9 @@ export default function Home({ searchParams }: SearchParamsProps) {
       <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
         <h1 className="h1-bold text-dark100_light900">All Questions</h1>
         <Link href="/ask-question" className="flex justify-end max-sm:w-full">
-          <Button className="primary-gradient min-h-11.5 px-4 py-3 text-light-900!">
+          <MotionButton className="primary-gradient min-h-11.5 px-4 py-3 text-light-900! cursor-pointer">
             Ask A Question
-          </Button>
+          </MotionButton>
         </Link>
       </div>
       <div className="mt-11 flex justify-between gap-5 sm:flex-row flex-col md:flex-col md:items-stretch sm:items-center">

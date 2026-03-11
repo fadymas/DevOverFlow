@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
-import { Button } from '../ui/button'
+import { MotionButton } from '../ui/button'
 
 interface Props {
   title: string
@@ -32,9 +32,9 @@ function NoResult({ title, description, link, linkTitle }: Props) {
         {description}
       </p>
       <Link href={link}>
-        <Button className="paragraph-medium mt-5 min-h-11.5 rounded-lg bg-primary-500 px-4 py-3 text-light-900 hover:bg-primary-500 dark:bg-primary-500 dark:text-light-900">
+        <MotionButton className="paragraph-medium mt-5 min-h-11.5 rounded-lg bg-primary-500 px-4 py-3 text-light-900 hover:bg-primary-500 dark:bg-primary-500 dark:text-light-900">
           {linkTitle}
-        </Button>
+        </MotionButton>
       </Link>
     </div>
   )

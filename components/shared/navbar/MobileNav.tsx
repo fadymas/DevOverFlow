@@ -4,38 +4,49 @@ import { sidebarLinks } from '@/constants'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { Button } from '@/components/ui/button'
+import { MotionButton } from '@/components/ui/button'
 import { useState } from 'react'
 import { serverSession } from '@/lib/auth/auth-client'
 import Signout from './Signout'
 import CustomUserAvatar from '../CustomUserAvatar'
-
+import { motion } from 'motion/react'
+import AnimatedLink from '@/components/Animated/AnimatedLink'
+import { itemVariants, scaleIn, navVariants } from '@/components/Animated/variants'
 function NavContent() {
   const pathname = usePathname()
   return (
-    <section className="flex h-full flex-col gap-6 pt-16">
+    <motion.ul
+      className="flex h-full flex-col gap-6 pt-16"
+      variants={navVariants}
+      initial="closed"
+      animate="open"
+    >
       {sidebarLinks.map((item) => {
         const isActive =
           (pathname.includes(item.route) && item.route.length > 1) || pathname === item.route
         return (
           <SheetClose asChild key={item.route}>
-            <Link
-              href={item.route}
-              className={`${isActive ? 'primary-gradient rounded-lg text-light-900' : 'text-dark300_light900'} flex items-center justify-start gap-4 bg-transparent p-4`}
+            <motion.li
+              variants={itemVariants}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className={`${isActive ? 'primary-gradient rounded-lg text-light-900' : 'text-dark300_light900'}  bg-transparent p-4`}
             >
-              <Image
-                src={item.imgURL}
-                alt={item.label}
-                width={20}
-                height={20}
-                className={`${isActive ? '' : 'invert-colors'}`}
-              />
-              <p className={`${isActive ? 'base-bold' : 'base-medium'}`}>{item.label}</p>
-            </Link>
+              <Link href={item.route} className="flex items-center justify-start gap-4">
+                <Image
+                  src={item.imgURL}
+                  alt={item.label}
+                  width={20}
+                  height={20}
+                  className={`${isActive ? '' : 'invert-colors'}`}
+                />
+                <p className={`${isActive ? 'base-bold' : 'base-medium'}`}>{item.label}</p>
+              </Link>
+            </motion.li>
           </SheetClose>
         )
       })}
-    </section>
+    </motion.ul>
   )
 }
 interface MobileNavProps {
@@ -61,12 +72,21 @@ function MobileNav({ session }: MobileNavProps) {
         />
       </SheetTrigger>
       <SheetContent side="left" className="background-light900_dark200 border-none pt-4 px-2  w-65">
-        <Link href="/" className="flex items-center gap-1 pt-2">
+        <AnimatedLink
+          initial={{ opacity: 0, x: -100 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -100 }}
+          transition={{ ease: 'easeInOut' }}
+          key="logo"
+          href="/"
+          className="flex items-center gap-1 pt-2"
+        >
           <Image src="/assets/images/site-logo.svg" width={23} height={23} alt="DevFlow" />
           <SheetTitle className="h2-bold text-dark100_light900 font-spaceGrotesk">
             Dev <span className="text-primary-500">Overflow</span>
           </SheetTitle>
-        </Link>
+        </AnimatedLink>
+
         <div>
           <NavContent />
         </div>
@@ -75,7 +95,14 @@ function MobileNav({ session }: MobileNavProps) {
           {session?.user ? (
             <>
               <SheetClose asChild>
-                <Link href={`/profile/${session.user.id}`} className="flex justify-center mt-4">
+                <AnimatedLink
+                  variants={scaleIn}
+                  initial="hidden"
+                  animate="visible"
+                  transition={{ duration: 0.3, type: 'spring', stiffness: 100 }}
+                  href={`/profile/${session.user.id}`}
+                  className="flex justify-center mt-4"
+                >
                   {session.user.image ? (
                     <Image
                       src={session.user.image as string}
@@ -87,26 +114,34 @@ function MobileNav({ session }: MobileNavProps) {
                   ) : (
                     <CustomUserAvatar name={session.user.name} isActive={isActive} />
                   )}
-                </Link>
+                </AnimatedLink>
               </SheetClose>
               <SheetClose asChild>
-                <Signout session={session} className="lg:hidden h-10" />
+                <motion.div
+                  className="w-full"
+                  initial="hidden"
+                  animate="visible"
+                  variants={scaleIn}
+                  transition={{ duration: 0.3, type: 'spring', stiffness: 100, damping: 15 }}
+                >
+                  <Signout session={session} className="lg:hidden h-10 w-full" />
+                </motion.div>
               </SheetClose>
             </>
           ) : (
             <>
               <SheetClose asChild>
                 <Link href="/sign-in">
-                  <Button className="base-medium background-light800_dark200 min-h-10.25 w-full rounded-lg px-4 py-3 shadow-none">
+                  <MotionButton className="base-medium background-light800_dark200 min-h-10.25 w-full rounded-lg px-4 py-3 shadow-none">
                     <span className="primary-text-gradient">Log In</span>
-                  </Button>
+                  </MotionButton>
                 </Link>
               </SheetClose>
               <SheetClose asChild>
                 <Link href="/sign-up">
-                  <Button className="base-medium background-light800_dark200 light-border-2 min-h-10.25 w-full rounded-lg px-4 py-3 shadow-none  border primary-text-gradient">
+                  <MotionButton className="base-medium background-light800_dark200 light-border-2 min-h-10.25 w-full rounded-lg px-4 py-3 shadow-none  border primary-text-gradient">
                     Sign Up
-                  </Button>
+                  </MotionButton>
                 </Link>
               </SheetClose>
             </>

@@ -9,7 +9,7 @@ import { AnswerSchema } from '@/lib/validations'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Editor } from '@tinymce/tinymce-react'
 import { useTheme } from '@/context/ThemeProvider'
-import { Button } from '../ui/button'
+import { MotionButton } from '../ui/button'
 import Image from 'next/image'
 import { createAnswer } from '@/lib/actions/answer.action'
 import { usePathname } from 'next/navigation'
@@ -96,7 +96,7 @@ function Answer({ question, questionId, userId }: Props) {
         <h4 className="paragraph-semibold text-dark400_light800">Write your answer here</h4>
 
         <>
-          <Button
+          <MotionButton
             className="btn light-border-2 gap-1.5 rounded-md px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500 "
             onClick={generateAiAnswer}
           >
@@ -108,7 +108,7 @@ function Answer({ question, questionId, userId }: Props) {
               className="object-contain"
             />
             {isSubmittingAI ? <>Generating...</> : <>Generate an AI Answer</>}
-          </Button>
+          </MotionButton>
         </>
       </div>
       <Form {...form}>
@@ -165,13 +165,13 @@ function Answer({ question, questionId, userId }: Props) {
             )}
           />
           <div className="flex justify-end ">
-            <Button
+            <MotionButton
               type="submit"
               className="primary-gradient w-fit text-white cursor-pointer"
               disabled={form.formState.isSubmitting}
             >
               {form.formState.isSubmitting ? 'Submitting...' : 'Submit'}
-            </Button>
+            </MotionButton>
           </div>
         </form>
       </Form>

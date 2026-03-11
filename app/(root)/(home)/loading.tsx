@@ -1,17 +1,13 @@
-import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import Link from 'next/link'
 
 export default function Loading() {
   return (
     <section>
       <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
-        <h1 className="h1-bold text-dark100_light900">All Questions</h1>
-        <Link href="/ask-question" className="flex justify-end max-sm:w-full">
-          <Button className="primary-gradient min-h-11.5 px-4 py-3 text-light-900!">
-            Ask A Question
-          </Button>
-        </Link>
+        <Skeleton className="h1-bold text-accent ">All Questions</Skeleton>
+        <Skeleton className="flex justify-end max-sm:w-full">
+          <div className=" min-h-11.5 px-4 py-3 text-accent  ">Ask A Question</div>
+        </Skeleton>
       </div>
 
       <div className=" mt-11 flex flex-wrap items-center justify-between gap-5">

@@ -4,7 +4,7 @@ import { EditUserSchema } from '@/lib/validations'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod/v4-mini'
-import { Button } from '@/components/ui/button'
+import { MotionButton } from '@/components/ui/button'
 
 import {
   Form,
@@ -136,13 +136,13 @@ function Profile({ user }: Props) {
         />
 
         <div className="mt-7 flex justify-end">
-          <Button
+          <MotionButton
             type="submit"
             disabled={form.formState.isSubmitting}
             className="primary-gradient w-fit"
           >
             {form.formState.isSubmitting ? 'Saving...' : 'Save'}
-          </Button>
+          </MotionButton>
         </div>
       </form>
     </Form>

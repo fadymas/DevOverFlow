@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useState, useCallback } from 'react'
-import { Button } from '../ui/button'
+import { MotionButton } from '../ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { useAuth } from '@/lib/auth/auth-client'
 
@@ -65,13 +65,13 @@ function AuthActions({
 
   return (
     <>
-      <Button
+      <MotionButton
         className="py-3 px-4 h-11.25 bg-linear-129 from-primary-from to-primary-to text-light text-light-900 hover:bg-linear-0 cursor-pointer transition-colors"
         disabled={isButtonDisabled}
         onClick={email ? handleResend : undefined}
       >
         {renderButtonContent()}
-      </Button>
+      </MotionButton>
 
       {AuthType === 'signIn' && (
         <p className="text-center paragraph-regular text-dark400_light700">

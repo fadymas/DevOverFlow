@@ -1,6 +1,6 @@
 'use client'
 import { setQueriedUrl } from '@/lib/utils'
-import { Button } from '../ui/button'
+import { MotionButton } from '../ui/button'
 import { useSearchParams, useRouter } from 'next/navigation'
 interface Props {
   pageNumber: number
@@ -24,23 +24,23 @@ function Pagination({ pageNumber, isNext }: Props) {
 
   return (
     <div className="flex w-full items-center justify-center gap-2">
-      <Button
+      <MotionButton
         disabled={pageNumber === 1}
         onClick={() => handleNavigation('prev')}
         className="light-border-2 border btn flex min-h-9 items-center justify-center gap-2"
       >
         <p className="body-medium text-dark200_light800">Prev</p>
-      </Button>
+      </MotionButton>
       <div className="bg-primary-500 justify-center flex rounded-md px-3.5 py-2">
         <p className="body-semibold text-light-900">{pageNumber}</p>
       </div>
-      <Button
+      <MotionButton
         disabled={!isNext}
         onClick={() => handleNavigation('next')}
         className="light-border-2 border btn flex min-h-9 items-center justify-center gap-2"
       >
         <p className="body-medium text-dark200_light800">Next</p>
-      </Button>
+      </MotionButton>
     </div>
   )
 }

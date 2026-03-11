@@ -12,6 +12,7 @@ import AnswersTab from '@/components/shared/AnswersTab'
 import { URLProps } from '@/types'
 import CustomUserAvatar from '@/components/shared/CustomUserAvatar'
 import { Metadata } from 'next'
+import { MotionButton } from '@/components/ui/button'
 
 export async function generateMetadata({ params }: URLProps): Promise<Metadata> {
   const { id } = await params
@@ -76,11 +77,10 @@ async function Page({ params }: URLProps) {
             if authinticated and userId = authinticated user
           } */}
           {session?.user.id === user.userId._id.toString() && (
-            <Link
-              href="/profile/edit"
-              className="paragraph-medium  min-h-11.5 min-w-43.75 px-4 py-3 transition-all  bg-linear-to-r from-primary-from to-primary-to text-white  rounded-md  text-center link "
-            >
-              Edit Profile
+            <Link href="/profile/edit">
+              <MotionButton className="paragraph-medium  min-h-11.5 min-w-43.75 px-4 py-3 transition-all  bg-linear-to-r from-primary-from to-primary-to text-white  rounded-md  text-center cursor-pointer">
+                Edit Profile
+              </MotionButton>
             </Link>
           )}
         </div>

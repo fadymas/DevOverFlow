@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
+import { MotionButton } from '@/components/ui/button'
 import { serverSession, useAuth } from '@/lib/auth/auth-client'
 
 interface Props {
@@ -13,14 +13,14 @@ function Signout({ session, className }: Props) {
     return null
   }
   return (
-    <Button
+    <MotionButton
       onClick={() => {
         signOut()
       }}
       className={`${className} rounded-md `}
     >
       Sign Out
-    </Button>
+    </MotionButton>
   )
 }
 export default Signout

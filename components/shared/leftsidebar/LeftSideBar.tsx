@@ -1,41 +1,56 @@
 'use client'
-import { Button } from '@/components/ui/button'
+import { MotionButton } from '@/components/ui/button'
 import { sidebarLinks } from '@/constants'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { serverSession } from '@/lib/auth/auth-client'
 import CustomUserAvatar from '../CustomUserAvatar'
+import { motion } from 'motion/react'
+import { itemVariants, navVariants, scaleIn } from '@/components/Animated/variants'
+import AnimatedLink from '@/components/Animated/AnimatedLink'
 
 function SideBarContent() {
   const pathname = usePathname()
 
   return (
-    <div className="list gap-6 flex flex-col">
+    <motion.ul
+      className="list gap-6 flex flex-col"
+      variants={navVariants}
+      initial="closed"
+      animate="open"
+    >
       {sidebarLinks.map((manu) => {
         const isActive =
           (pathname.includes(manu.route) && manu.route.length > 1) || pathname === manu.route
 
         return (
-          <Link
-            href={manu.route}
+          <motion.li
             key={manu.label}
-            className={`  p-4 rounded-lg gap-2.5  flex font-inter justify-center lg:justify-start  ${isActive ? 'primary-gradient rounded-lg text-light-900' : 'text-dark300_light900'} `}
+            variants={itemVariants}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            className={` rounded-lg   ${isActive ? 'primary-gradient rounded-lg text-light-900' : 'text-dark300_light900'} `}
           >
-            <Image
-              src={manu.imgURL}
-              alt={manu.label}
-              width={24}
-              height={24}
-              className={`${isActive ? '' : 'invert-colors'}`}
-            />
-            <p className={`${isActive ? 'base-bold' : 'base-medium'} hidden lg:block`}>
-              {manu.label}
-            </p>
-          </Link>
+            <Link
+              href={manu.route}
+              className="flex  gap-2.5 font-inter justify-center lg:justify-start p-4 "
+            >
+              <Image
+                src={manu.imgURL}
+                alt={manu.label}
+                width={24}
+                height={24}
+                className={`${isActive ? '' : 'invert-colors'}`}
+              />
+              <p className={`${isActive ? 'base-bold' : 'base-medium'} hidden lg:block`}>
+                {manu.label}
+              </p>
+            </Link>
+          </motion.li>
         )
       })}
-    </div>
+    </motion.ul>
   )
 }
 
@@ -47,14 +62,31 @@ function LeftSideBar({ session }: LeftSideBarProps) {
   const isActive = pathname === `/profile/${session?.user.id}`
 
   return (
-    <aside className=" justify-start items-center gap-7 flex-col p-[150px_24px_36px_24px]  sticky left-0 top-0  min-h-screen  background-light900_dark200 hidden sm:flex  border-r shadow-[10px_10px_20px_rgba(218,213,213,0.1)] ">
+    <motion.aside
+      initial={{ x: -50, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      transition={{
+        x: { stiffness: 1000, velocity: -100 },
+        type: 'spring',
+        damping: 10,
+        ease: 'easeInOut'
+      }}
+      className=" justify-start items-center gap-7 flex-col p-[150px_24px_36px_24px]  sticky left-0 top-0  min-h-screen  background-light900_dark200 hidden sm:flex  border-r shadow-[10px_10px_20px_rgba(218,213,213,0.1)] "
+    >
       <div className=" flex flex-col gap-18 self-stretch min-w-6">
         <SideBarContent />
       </div>
       <div className=" self-stretch flex flex-col gap-3 ">
         {session?.user ? (
           <div>
-            <Link href={`/profile/${session.user.id}`} className="flex justify-center">
+            <AnimatedLink
+              variants={scaleIn}
+              initial="hidden"
+              animate="visible"
+              transition={{ type: 'spring', stiffness: 100 }}
+              href={`/profile/${session.user.id}`}
+              className="flex justify-center"
+            >
               {session.user.image ? (
                 <Image
                   src={session.user.image as string}
@@ -66,12 +98,12 @@ function LeftSideBar({ session }: LeftSideBarProps) {
               ) : (
                 <CustomUserAvatar name={session.user.name} isActive={isActive} />
               )}
-            </Link>
+            </AnimatedLink>
           </div>
         ) : (
           <>
             <Link href="/sign-in">
-              <Button className="w-full rounded-lg  shadow-none h-14 background-light800_dark200">
+              <MotionButton className="w-full rounded-lg  shadow-none h-14 background-light800_dark200 cursor-pointer">
                 <span className="primary-text-gradient max-lg:hidden base-medium font-inter ">
                   Log In
                 </span>
@@ -82,11 +114,11 @@ function LeftSideBar({ session }: LeftSideBarProps) {
                   height={24}
                   className="invert-colors lg:hidden"
                 />
-              </Button>
+              </MotionButton>
             </Link>
             <Link href="/sign-up">
-              <Button
-                className="w-full h-14 rounded-lg shadow-none background-light800_dark200
+              <MotionButton
+                className="w-full h-14 rounded-lg shadow-none background-light800_dark200 cursor-pointer
                "
               >
                 <span className="max-lg:hidden base-medium font-inter  primary-text-gradient ">
@@ -99,12 +131,12 @@ function LeftSideBar({ session }: LeftSideBarProps) {
                   height={24}
                   className="invert-colors lg:hidden"
                 />
-              </Button>
+              </MotionButton>
             </Link>
           </>
         )}
       </div>
-    </aside>
+    </motion.aside>
   )
 }
 
