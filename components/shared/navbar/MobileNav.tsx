@@ -26,23 +26,22 @@ function NavContent() {
           (pathname.includes(item.route) && item.route.length > 1) || pathname === item.route
         return (
           <SheetClose asChild key={item.route}>
-            <motion.li
+            <AnimatedLink
+              href={item.route}
+              className={`flex items-center justify-start gap-4  ${isActive ? 'primary-gradient rounded-lg text-light-900' : 'text-dark300_light900'}  bg-transparent p-4`}
               variants={itemVariants}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              className={`${isActive ? 'primary-gradient rounded-lg text-light-900' : 'text-dark300_light900'}  bg-transparent p-4`}
             >
-              <Link href={item.route} className="flex items-center justify-start gap-4">
-                <Image
-                  src={item.imgURL}
-                  alt={item.label}
-                  width={20}
-                  height={20}
-                  className={`${isActive ? '' : 'invert-colors'}`}
-                />
-                <p className={`${isActive ? 'base-bold' : 'base-medium'}`}>{item.label}</p>
-              </Link>
-            </motion.li>
+              <Image
+                src={item.imgURL}
+                alt={item.label}
+                width={20}
+                height={20}
+                className={`${isActive ? '' : 'invert-colors'}`}
+              />
+              <p className={`${isActive ? 'base-bold' : 'base-medium'}`}>{item.label}</p>
+            </AnimatedLink>
           </SheetClose>
         )
       })}
