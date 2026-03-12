@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { Badge } from '../ui/badge'
 import RenderTag from '../shared/rightsidebar/RenderTag'
 import CustomUserAvatar from '../shared/CustomUserAvatar'
+import * as motion from 'motion/react-client'
+import { fadeUp } from '../Animated/variants'
 interface Props {
   user: IUserProfile & {
     userId: { _id: string; image: string; name: string }
@@ -15,7 +17,13 @@ async function UserCard({ user }: Props) {
   const interactedTags = await getTopInteractedTags({ userId: user._id.toString() })
 
   return (
-    <div className="shadow-light100_darknone w-full max-xs:min-w-full xs:w-65">
+    <motion.div
+      variants={fadeUp}
+      initial="hidden"
+      whileInView="visible"
+      transition={{ duration: 0.2, ease: 'easeInOut' }}
+      className="shadow-light100_darknone w-full max-xs:min-w-full xs:w-65"
+    >
       <article className="flex w-full flex-col items-center justify-start rounded-2xl border p-8 px-1 background-light900_dark200 light-border">
         <Link href={`/profile/${user.userId?._id}`}>
           {user.userId?.image ? (
@@ -50,7 +58,7 @@ async function UserCard({ user }: Props) {
           )}
         </div>
       </article>
-    </div>
+    </motion.div>
   )
 }
 

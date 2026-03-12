@@ -21,7 +21,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
   const session = await auth.api.getSession({
     headers: await headers()
   })
-  if (!session?.user) redirect('/')
+  if (!session?.user) redirect('/sign-in')
 
   const result = await getSavedQuestions({
     userId: session.user.id,

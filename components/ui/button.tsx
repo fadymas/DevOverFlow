@@ -3,6 +3,12 @@ import * as React from 'react'
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { motion } from 'motion/react'
+import type {
+  LegacyAnimationControls,
+  TargetAndTransition,
+  VariantLabels,
+  Variants
+} from 'motion/react'
 import { cn } from '@/lib/utils'
 
 const buttonVariants = cva(
@@ -61,11 +67,26 @@ function MotionButton({
   variant,
   size,
   children,
+  initial,
+  animate,
+  variants,
   ...props
-}: React.ComponentProps<'button'> & VariantProps<typeof buttonVariants>) {
+}: React.ComponentProps<'button'> &
+  VariantProps<typeof buttonVariants> & {
+    initial?: boolean | VariantLabels | TargetAndTransition | undefined
+    animate?: boolean | VariantLabels | TargetAndTransition | LegacyAnimationControls | undefined
+    variants?: Variants
+  }) {
   return (
     <Button variant={variant} size={size} className={className} {...props} asChild>
-      <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.9 }}>
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.9 }}
+        variants={variants}
+        initial={initial}
+        animate={animate}
+        transition={{ type: 'spring', stiffness: 100, duration: 0.2 }}
+      >
         {children}
       </motion.button>
     </Button>

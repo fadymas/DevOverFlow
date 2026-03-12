@@ -4,8 +4,9 @@ import LocalSearch from '@/components/shared/search/LocalSearch'
 import { TagFilters } from '@/constants/filters'
 import { getAllTags } from '@/lib/actions/tag.action'
 import { SearchParamsProps } from '@/types'
-import Link from 'next/link'
 import { Metadata } from 'next'
+import AnimatedLink from '@/components/Animated/AnimatedLink'
+import { fadeUp } from '@/components/Animated/variants'
 
 export const metadata: Metadata = {
   title: 'Tags',
@@ -35,7 +36,15 @@ async function page({ searchParams }: SearchParamsProps) {
       <section className="mt-12 flex flex-wrap gap-4">
         {result.tags.length > 0 ? (
           result.tags.map((tag) => (
-            <Link href={`/tags/${tag._id}`} key={tag._id} className="shadow-light100_darknone">
+            <AnimatedLink
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              transition={{ duration: 0.2, ease: 'easeInOut' }}
+              href={`/tags/${tag._id}`}
+              key={tag._id}
+              className="shadow-light100_darknone"
+            >
               <article className="background-light900_dark200 light-border flex w-full flex-col rounded-2xl border px-8 py-10 sm:w-65">
                 <div className="background-light800_dark400 w-fit rounded-sm px-5 py-1.5">
                   <p className="paragraph-semibold text-dark300_light900">{tag.name}</p>
@@ -48,7 +57,7 @@ async function page({ searchParams }: SearchParamsProps) {
                   Questions
                 </p>
               </article>
-            </Link>
+            </AnimatedLink>
           ))
         ) : (
           <NoResult

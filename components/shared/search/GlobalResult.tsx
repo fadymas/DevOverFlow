@@ -7,6 +7,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import GlobalFilters from './GlobalFilters'
 import { globalSearch } from '@/lib/actions/general.action'
+import { motion } from 'motion/react'
 function GlobalResult() {
   const searchParams = useSearchParams()
 
@@ -53,7 +54,12 @@ function GlobalResult() {
   }
 
   return (
-    <div className="absolute top-full z-10 mt-3 w-full bg-light-800 py-5 shadow-sm dark:bg-dark-400 rounded-xl">
+    <motion.div
+      initial={{ height: 0, opacity: 0 }}
+      animate={{ height: 'auto', opacity: 1 }}
+      exit={{ height: 0, opacity: 0, transition: { duration: 0.3 } }}
+      className="absolute top-full z-10 mt-3 w-full bg-light-800 py-5 shadow-sm dark:bg-dark-400 rounded-xl overflow-hidden"
+    >
       <GlobalFilters />
 
       <div className="my-5 h-px bg-light-700 dark:bg-dark-500/50" />
@@ -98,7 +104,7 @@ function GlobalResult() {
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   )
 }
 

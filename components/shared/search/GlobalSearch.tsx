@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useDeferredValue, useEffect, useRef, useState } from 'react'
 import GlobalResult from './GlobalResult'
+import { AnimatePresence } from 'motion/react'
 
 function GlobalSearch() {
   const router = useRouter()
@@ -70,7 +71,7 @@ function GlobalSearch() {
           text-dark400_light700 background-light800_darkgradient border-none shadow-none outline-none"
         />
       </div>
-      {isOpen && <GlobalResult />}
+      <AnimatePresence mode="wait">{isOpen && <GlobalResult />}</AnimatePresence>
     </div>
   )
 }

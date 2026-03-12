@@ -1,5 +1,4 @@
 import { getUserInfo } from '@/lib/actions/user.action'
-import Image from 'next/image'
 import Link from 'next/link'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { getJoinedMonthYear } from '@/lib/utils'
@@ -13,7 +12,9 @@ import { URLProps } from '@/types'
 import CustomUserAvatar from '@/components/shared/CustomUserAvatar'
 import { Metadata } from 'next'
 import { MotionButton } from '@/components/ui/button'
-
+import * as motion from 'motion/react-client'
+import AnimatedImage from '@/components/Animated/AnimatedImage'
+import { scaleIn } from '@/components/Animated/variants'
 export async function generateMetadata({ params }: URLProps): Promise<Metadata> {
   const { id } = await params
   const { user } = await getUserInfo({ userId: id })
@@ -38,7 +39,11 @@ async function Page({ params }: URLProps) {
       <div className="flex flex-col-reverse items-start justify-between sm:flex-row">
         <div className="flex flex-col items-start gap-4 lg:flex-row">
           {user.userId.image ? (
-            <Image
+            <AnimatedImage
+              variants={scaleIn}
+              initial="hidden"
+              animate="visible"
+              transition={{ type: 'spring', stiffness: 50 }}
               src={user.userId.image}
               alt="profile image"
               width={140}
@@ -49,7 +54,14 @@ async function Page({ params }: URLProps) {
             <CustomUserAvatar name={user.userId.name} />
           )}
           <div className="mt-3">
-            <h2 className="h2-bold text-dark100_light900">{user.userId.name}</h2>
+            <motion.h2
+              initial={{ x: -100, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.5, type: 'spring', stiffness: 50 }}
+              className="h2-bold text-dark100_light900"
+            >
+              {user.userId.name}
+            </motion.h2>
 
             <div className="mt-5 flex flex-wrap items-center justify-start gap-5">
               {user.portfolioWebsite && (
@@ -69,7 +81,17 @@ async function Page({ params }: URLProps) {
               />
             </div>
 
-            {user.bio && <p className="paragraph-regular text-dark400_light800 mt-8">{user.bio}</p>}
+            {user.bio && (
+              <motion.p
+                variants={scaleIn}
+                initial="hidden"
+                animate="visible"
+                transition={{ duration: 0.5, type: 'spring', stiffness: 50 }}
+                className="paragraph-regular text-dark400_light800 mt-8 text-ellipsis line-clamp-2"
+              >
+                {user.bio}
+              </motion.p>
+            )}
           </div>
         </div>
         <div className="flex justify-end max-sm:mb-5 max-sm:w-full sm:mt-3">
@@ -78,7 +100,12 @@ async function Page({ params }: URLProps) {
           } */}
           {session?.user.id === user.userId._id.toString() && (
             <Link href="/profile/edit">
-              <MotionButton className="paragraph-medium  min-h-11.5 min-w-43.75 px-4 py-3 transition-all  bg-linear-to-r from-primary-from to-primary-to text-white  rounded-md  text-center cursor-pointer">
+              <MotionButton
+                variants={scaleIn}
+                initial="hidden"
+                animate="visible"
+                className="paragraph-medium  min-h-11.5 min-w-43.75 px-4 py-3 transition-all  bg-linear-to-r from-primary-from to-primary-to text-white  rounded-md  text-center cursor-pointer"
+              >
                 Edit Profile
               </MotionButton>
             </Link>
@@ -91,7 +118,12 @@ async function Page({ params }: URLProps) {
         badges={badgeCounts}
         reputation={reputation}
       />
-      <div className="mt-10 flex gap-10">
+      <motion.div
+        variants={scaleIn}
+        initial="hidden"
+        animate="visible"
+        className="mt-10 flex gap-10"
+      >
         <Tabs defaultValue="top-posts" className="flex-1">
           <TabsList className="background-light800_dark400 min-h-10.5 p-1">
             <TabsTrigger value="top-posts" className="tab">
@@ -108,7 +140,7 @@ async function Page({ params }: URLProps) {
             <AnswersTab userId={user._id.toString()} />
           </TabsContent>
         </Tabs>
-      </div>
+      </motion.div>
     </>
   )
 }

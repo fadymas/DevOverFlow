@@ -83,6 +83,8 @@ function LeftSideBar({ session }: LeftSideBarProps) {
               variants={scaleIn}
               initial="hidden"
               animate="visible"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
               transition={{ type: 'spring', stiffness: 100 }}
               href={`/profile/${session.user.id}`}
               className="flex justify-center"

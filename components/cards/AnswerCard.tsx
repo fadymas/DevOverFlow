@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Metric from '../shared/Metric'
 import EditDeleteAction from '../shared/EditDeleteAction'
 import { getSession } from '@/lib/actions/auth-action'
-
+import * as motion from 'motion/react-client'
 interface Props {
   _id: string
   question: {
@@ -25,7 +25,12 @@ async function AnswerCard({ _id, question, author, upvotes, createdAt }: Props) 
   const { session } = await getSession()
 
   return (
-    <div className="card-wrapper rounded-[10px] px-11 py-9">
+    <motion.div
+      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 10 }}
+      transition={{ duration: 0.2 }}
+      className="card-wrapper rounded-[10px] px-11 py-9"
+    >
       <div className="flex flex-col-reverse items-start justify-between gap-5 sm:flex-row">
         <div>
           <span className="subtle-regular text-dark400_light700 line-clamp-1 flex sm:hidden">
@@ -57,7 +62,7 @@ async function AnswerCard({ _id, question, author, upvotes, createdAt }: Props) 
           textStyles="small-medium text-dark400_light800"
         />
       </div>
-    </div>
+    </motion.div>
   )
 }
 

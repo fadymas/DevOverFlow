@@ -26,5 +26,9 @@ const scaleIn = {
   visible: { opacity: 1, scale: 1 },
   hidden: { opacity: 0, scale: 0 }
 }
+const fadeUp = {
+  visible: { opacity: 1, y: 0 },
+  hidden: { opacity: 0, y: 10 }
+}
 
-export { navVariants, itemVariants, scaleIn }
+export { navVariants, itemVariants, scaleIn, fadeUp }

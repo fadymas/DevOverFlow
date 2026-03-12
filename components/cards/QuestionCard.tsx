@@ -5,7 +5,8 @@ import Metric from '../shared/Metric'
 import { formatNumber, getTimeStamp } from '@/lib/utils'
 import { getSession } from '@/lib/actions/auth-action'
 import EditDeleteAction from '../shared/EditDeleteAction'
-
+import * as motion from 'motion/react-client'
+import { fadeUp } from '../Animated/variants'
 interface Props {
   _id: string
   title: string
@@ -30,7 +31,13 @@ async function QuestionCard({
 }: Props) {
   const { session } = await getSession()
   return (
-    <div className="card-wrapper p-9 sm:px-11 rounded-[10px] ">
+    <motion.div
+      variants={fadeUp}
+      initial="hidden"
+      whileInView="visible"
+      transition={{ duration: 0.2, ease: 'easeInOut' }}
+      className="card-wrapper p-9 sm:px-11 rounded-[10px] "
+    >
       <div className="content  flex sm:flex-row flex-col-reverse items-start justify-between gap-5">
         <div>
           <span className="subtle-regular text-dark400_light700 line-clamp-1 flex sm:hidden">
@@ -85,7 +92,7 @@ async function QuestionCard({
           />
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 

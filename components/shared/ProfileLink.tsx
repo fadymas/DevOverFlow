@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import React from 'react'
-
+import * as motion from 'motion/react-client'
 interface ProfileLinkProps {
   imgUrl: string
   href?: string
@@ -9,7 +8,12 @@ interface ProfileLinkProps {
 }
 function ProfileLink({ imgUrl, href, title }: ProfileLinkProps) {
   return (
-    <div className="flex-center gap-1 ">
+    <motion.div
+      className="flex-center gap-1 "
+      initial={{ x: -100, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      transition={{ duration: 0.5, type: 'spring', stiffness: 50 }}
+    >
       <Image src={imgUrl} alt="icon" width={20} height={20} />
       {href ? (
         <Link href={href} target="_blank" className="text-blue-500 paragrah-medium ">
@@ -18,7 +22,7 @@ function ProfileLink({ imgUrl, href, title }: ProfileLinkProps) {
       ) : (
         <p className="paragraph-medium text-dark400_light700 ">{title}</p>
       )}
-    </div>
+    </motion.div>
   )
 }
 
