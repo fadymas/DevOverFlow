@@ -34,8 +34,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     const questionsResult = await getQuestions({
-      searchQuery: '',
-      filter: '',
       page: 1,
       pageSize: 100
     }) // fetching more for sitemap if applicable
@@ -50,7 +48,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   try {
-    const tagsResult = await getAllTags({ searchQuery: '', filter: '' })
+    const tagsResult = await getAllTags({})
     dynamicTagRoutes = tagsResult.tags.map((tag) => ({
       url: `${baseUrl}/tags/${tag._id}`,
       lastModified: tag.createdOn || new Date(),
@@ -62,7 +60,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   try {
-    const usersResult = await getAllUsers({ searchQuery: '', filter: '', page: 1, pageSize: 100 })
+    const usersResult = await getAllUsers({ page: 1, pageSize: 100 })
     dynamicUserRoutes = usersResult.users.map((user) => ({
       url: `${baseUrl}/profile/${user.userId._id}`,
       lastModified: user.joinedAt || new Date(),
