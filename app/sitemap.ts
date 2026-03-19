@@ -3,6 +3,8 @@ import { getQuestions } from '@/lib/actions/question.action'
 import { getAllTags } from '@/lib/actions/tag.action'
 import { getAllUsers } from '@/lib/actions/user.action'
 
+export const revalidate = 86400
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
 

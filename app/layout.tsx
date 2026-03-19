@@ -40,7 +40,9 @@ export const metadata: Metadata = {
         height: 630,
         alt: 'DevOverflow'
       }
-    ]
+    ],
+    siteName: 'DevOverFlow',
+    url: process.env.NEXT_PUBLIC_SERVER_URL
   },
 
   twitter: {
