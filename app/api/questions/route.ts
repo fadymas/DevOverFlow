@@ -19,7 +19,6 @@ export async function GET(request: NextRequest) {
       page: pageParam ? Number(pageParam) : 1,
       pageSize: pageSizeParam ? Number(pageSizeParam) : 10
     }
-    console.log(params)
 
     const parsed = GetQuestionsServerSchema.safeParse(params)
     if (!parsed.success) {

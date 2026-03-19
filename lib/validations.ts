@@ -172,8 +172,8 @@ export const GetUserByIdServerSchema = z.object({
 export const GetAllUsersServerSchema = z.object({
   page: z.number().int().positive().optional(),
   pageSize: z.number().int().positive().optional(),
-  filter: z.enum(['new_users', 'old_users', 'top_contributor']).optional(),
-  searchQuery: z.string().optional()
+  filter: z.enum(['new_users', 'old_users', 'top_contributor', '']).optional().default(''),
+  searchQuery: z.string().optional().default('')
 })
 
 /** user.action → updateUser */

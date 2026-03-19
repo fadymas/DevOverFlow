@@ -46,7 +46,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
       }
     }
   } else {
-    result = await getData(`http://localhost:3000/api/questions?${params.toString()}`)
+    result = await getData(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/questions?${params.toString()}`)
   }
 
   return (

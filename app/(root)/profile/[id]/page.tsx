@@ -1,4 +1,3 @@
-import { getUserInfo } from '@/lib/actions/user.action'
 import Link from 'next/link'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { getJoinedMonthYear } from '@/lib/utils'
@@ -15,9 +14,10 @@ import { MotionButton } from '@/components/ui/button'
 import * as motion from 'motion/react-client'
 import AnimatedImage from '@/components/Animated/AnimatedImage'
 import { scaleIn } from '@/components/Animated/variants'
+import { getData } from '@/lib/queries/getData'
 export async function generateMetadata({ params }: URLProps): Promise<Metadata> {
   const { id } = await params
-  const { user } = await getUserInfo({ userId: id })
+  const { user } = await getData(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/${id}`)
   return {
     title: `${user.userId.name}'s Profile`
   }
@@ -26,9 +26,9 @@ export async function generateMetadata({ params }: URLProps): Promise<Metadata> 
 async function Page({ params }: URLProps) {
   const { id } = await params
 
-  const { user, totalQuestions, totalAnswers, badgeCounts, reputation } = await getUserInfo({
-    userId: id
-  })
+  const { user, totalQuestions, totalAnswers, badgeCounts, reputation } = await getData(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/${id}`
+  )
 
   const session = await auth.api.getSession({
     headers: await headers()
@@ -77,7 +77,7 @@ async function Page({ params }: URLProps) {
 
               <ProfileLink
                 imgUrl="/assets/icons/calendar.svg"
-                title={getJoinedMonthYear(user.joinedAt)}
+                title={getJoinedMonthYear(new Date(user.joinedAt))}
               />
             </div>
 
