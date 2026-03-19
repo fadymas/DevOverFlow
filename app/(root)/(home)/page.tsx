@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import HomeFilters from '@/components/home/HomeFilters'
 import Filter from '@/components/shared/Filter'
 import NoResult from '@/components/shared/NoResult'
@@ -5,13 +6,13 @@ import QuestionCard from '@/components/cards/QuestionCard'
 import LocalSearch from '@/components/shared/search/LocalSearch'
 import { MotionButton } from '@/components/ui/button'
 import { HomePageFilters } from '@/constants/filters'
-import { getQuestions, getRecommendedQuestions } from '@/lib/actions/question.action'
+import { getRecommendedQuestions } from '@/lib/actions/question.action'
 import Link from 'next/link'
-import { use } from 'react'
 import { SearchParamsProps } from '@/types'
 import Pagination from '@/components/shared/Pagination'
 import { getSession } from '@/lib/actions/auth-action'
 import { Metadata } from 'next'
+import { getData } from '@/lib/queries/getData'
 
 export const metadata: Metadata = {
   title: 'Home',
@@ -19,20 +20,25 @@ export const metadata: Metadata = {
     'DevFlow is a community-driven platform for asking and answering programming questions.'
 }
 
-export default function Home({ searchParams }: SearchParamsProps) {
-  const { q, filter, page } = use(searchParams)
-  const userId = use(getSession()).session?.user.id
+export default async function Home({ searchParams }: SearchParamsProps) {
+  const { q, filter, page } = await searchParams
+  const params = new URLSearchParams({
+    searchQuery: q || '',
+    filter: filter || '',
+    page: page ? String(+page) : '1',
+    pageSize: '10'
+  })
+
+  const userId = (await getSession()).session?.user.id
 
   let result
   if (filter === 'recommended') {
     if (userId) {
-      result = use(
-        getRecommendedQuestions({
-          userId,
-          searchQuery: q,
-          page: page ? +page : 1
-        })
-      )
+      result = await getRecommendedQuestions({
+        userId,
+        searchQuery: q,
+        page: page ? +page : 1
+      })
     } else {
       result = {
         questions: [],
@@ -40,13 +46,7 @@ export default function Home({ searchParams }: SearchParamsProps) {
       }
     }
   } else {
-    result = use(
-      getQuestions({
-        searchQuery: q,
-        filter,
-        page: page ? +page : 1
-      })
-    )
+    result = await getData(`http://localhost:3000/api/questions?${params.toString()}`)
   }
 
   return (
@@ -76,8 +76,8 @@ export default function Home({ searchParams }: SearchParamsProps) {
       </div>
       <div className="questions mt-10 flex w-full  flex-col gap-6">
         {/* HomeQuestion can be saved , mine,home */}
-        {result!.questions.length > 0 ? (
-          result!.questions.map((question) => {
+        {result?.questions?.length > 0 ? (
+          result.questions.map((question: any) => {
             return (
               <QuestionCard
                 key={question._id}
@@ -88,7 +88,7 @@ export default function Home({ searchParams }: SearchParamsProps) {
                 upvotes={question.upvotes}
                 views={question.views}
                 answers={question.answers}
-                createdAt={question.createdAt}
+                createdAt={new Date(question.createdAt)}
                 isProfile={false}
               />
             )

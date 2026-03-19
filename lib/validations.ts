@@ -107,8 +107,8 @@ export const CreateQuestionServerSchema = z.object({
 export const GetQuestionsServerSchema = z.object({
   page: z.number().int().positive().optional(),
   pageSize: z.number().int().positive().optional(),
-  searchQuery: z.string().optional(),
-  filter: z.enum(['newest', 'frequent', 'unanswered']).optional()
+  searchQuery: z.string().optional().nullable(),
+  filter: z.enum(['newest', 'frequent', 'unanswered']).optional().nullable()
 })
 
 /** question.action → getQuestionById */
