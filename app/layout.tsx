@@ -32,6 +32,7 @@ export const metadata: Metadata = {
     icon: '/assets/images/site-logo.svg'
   },
   openGraph: {
+    type: 'website',
     images: [
       {
         url: '/opengraph-image.png',
@@ -40,6 +41,10 @@ export const metadata: Metadata = {
         alt: 'DevOverflow'
       }
     ]
+  },
+
+  twitter: {
+    card: 'summary_large_image'
   }
 }
 
