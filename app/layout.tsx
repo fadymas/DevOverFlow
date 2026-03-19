@@ -24,11 +24,22 @@ export const metadata: Metadata = {
   },
   title: {
     template: '%s | DevOverFlow',
-    default: 'DevOverFlow'
+    default:
+      'DevOverflow is a community-driven platform for asking and answering programming questions. Get help, share knowledge, and grow as a developer.'
   },
   description: 'A community-driven platform for asking and answering programming questions',
   icons: {
     icon: '/assets/images/site-logo.svg'
+  },
+  openGraph: {
+    images: [
+      {
+        url: '/opengraph-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'DevOverflow'
+      }
+    ]
   }
 }
 

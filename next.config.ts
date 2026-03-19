@@ -44,7 +44,8 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: [
     'http://localhost:3000',
     'http://172.18.160.1:3000',
-    'https://dev-over-flow-kohl.vercel.app/'
+    'https://dev-over-flow-kohl.vercel.app/',
+    'https://dev-over-flow-n4x8x6lni-fadymas-projects.vercel.app/'
   ],
   poweredByHeader: false,
   experimental: {

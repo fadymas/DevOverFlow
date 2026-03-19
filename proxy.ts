@@ -8,7 +8,9 @@ const allowedDevOrigins = [
   'http://172.18.160.1:3000',
   'https://dev-over-flow-kohl.vercel.app',
   'localhost:3000',
-  'dev-over-flow-kohl.vercel.app'
+  'dev-over-flow-kohl.vercel.app',
+  'https://dev-over-flow-n4x8x6lni-fadymas-projects.vercel.app/',
+  'dev-over-flow-n4x8x6lni-fadymas-projects.vercel.app/'
 ]
 
 const ratelimit = new Ratelimit({

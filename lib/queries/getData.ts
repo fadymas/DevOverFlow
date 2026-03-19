@@ -3,7 +3,8 @@ export async function getData(url: string) {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
-    }
+    },
+    next: { revalidate: 60 }
   })
   const data = await response.json()
   return data
