@@ -22,7 +22,8 @@ export async function generateMetadata({ params }: URLProps): Promise<Metadata> 
   const result = await getQuestionById({ questionId: id })
   return {
     title: result.title,
-    description: result.content.substring(0, 150)
+    description: result.content.substring(0, 150),
+    openGraph: { title: result.title, description: result.content.substring(0, 150) }
   }
 }
 
