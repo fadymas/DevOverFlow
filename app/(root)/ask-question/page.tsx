@@ -1,7 +1,6 @@
 import Question from '@/components/forms/Question'
 import { getUserById } from '@/lib/actions/user.action'
-import { auth } from '@/lib/auth/auth'
-import { headers } from 'next/headers'
+import { getSession } from '@/lib/actions/auth-action'
 import { redirect } from 'next/navigation'
 import { Metadata } from 'next'
 
@@ -11,9 +10,7 @@ export const metadata: Metadata = {
 }
 
 async function AskQuestion() {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  })
+  const { session } = await getSession()
   if (!session?.user) redirect('/sign-in')
 
   const mongoUser = await getUserById({ userId: session.user.id })
